@@ -11,8 +11,6 @@ Before starting to implement your own code, make sure to:
 3. get familiar with the structure of the [EPIC-KITCHENS dataset](https://epic-kitchens.github.io/2022), what a sample, a clip and a frame are
 4. play around with the code in the template to familiarize with all the tools.
 
-Some scripts do not need to be run (i.e., [train_classifier_scratch.py](./train_classifier_scratch.py)) but are still inserted in the template in order to make the students understand how the baseline models are obtained.
-
 ### 1. Local
 
 You can work on your local machine directly, the code which needs to be run does not require heavy computations. 
