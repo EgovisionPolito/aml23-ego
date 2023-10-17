@@ -1,4 +1,4 @@
-# Starting code for course project of Advanced Machine Learning (AML) 2023
+# Starting code for [course project](https://docs.google.com/document/d/12SDMbO3MgdawRx1C6XhHFtmAwzCXgpGQTElbGx4Qm78/edit?usp=sharing) of Advanced Machine Learning (AML) 2023
 
 ## Getting started
 
