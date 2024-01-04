@@ -51,7 +51,7 @@ def main():
 
     action_classifier = tasks.ActionRecognition("action-classifier", models, 1,
                                                 args.total_batch, args.models_dir, num_classes,
-                                                args.test.num_clips, args.models, args=args)
+                                                args.save.num_clips, args.models, args=args)
     action_classifier.load_on_gpu(device)
     if args.resume_from is not None:
         action_classifier.load_last_model(args.resume_from)
@@ -96,16 +96,16 @@ def save_feat(model, loader, device, it, num_classes):
 
             for m in modalities:
                 batch, _, height, width = data[m].shape
-                data[m] = data[m].reshape(batch, args.test.num_clips,
-                                          args.test.num_frames_per_clip[m], -1, height, width)
+                data[m] = data[m].reshape(batch, args.save.num_clips,
+                                          args.save.num_frames_per_clip[m], -1, height, width)
                 data[m] = data[m].permute(1, 0, 3, 2, 4, 5)
 
-                logits[m] = torch.zeros((args.test.num_clips, batch, num_classes)).to(device)
-                features[m] = torch.zeros((args.test.num_clips, batch, model.task_models[m]
+                logits[m] = torch.zeros((args.save.num_clips, batch, num_classes)).to(device)
+                features[m] = torch.zeros((args.save.num_clips, batch, model.task_models[m]
                                            .module.feat_dim)).to(device)
 
             clip = {}
-            for i_c in range(args.test.num_clips):
+            for i_c in range(args.save.num_clips):
                 for m in modalities:
                     clip[m] = data[m][i_c].to(device)
 
