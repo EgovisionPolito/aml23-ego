@@ -91,6 +91,9 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # indices_list = [80, 81, ..., 160]
 
         sequence_len = self.num_frames_per_clip[modality]  * self.num_clips
+        if self.num_frames[modality] < sequence_len:
+            sequence_len = self.num_frames[modality]
+            
         sequence = list(index for index in range(record.start_frame, record.start_frame + sequence_len))
         return sequence
 
