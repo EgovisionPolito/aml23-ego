@@ -46,6 +46,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
             pickle_name = split + "_test.pkl"
 
         self.list_file = pd.read_pickle(os.path.join(self.dataset_conf.annotations_path, pickle_name))
+        logger.info(self.list_file)
         logger.info(f"Dataloader for {split}-{self.mode} with {len(self.list_file)} samples generated")
         self.video_list = [EpicVideoRecord(tup, self.dataset_conf) for tup in self.list_file.iterrows()]
         self.transform = transform  # pipeline of transforms
@@ -85,7 +86,15 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-        raise NotImplementedError("You should implement _get_val_indices")
+        # start_frame = 80
+        # end_frame = 500
+        # indices_list = [80, 81, ..., 160]
+
+        sequence_len = self.num_frames_per_clip  * self.num_clips
+        sequence = list(index for index in range(record.start_frame, record.start_frame + sequence_len))
+        return sequence
+
+        #raise NotImplementedError("You should implement _get_val_indices")
 
     def __getitem__(self, index):
 
