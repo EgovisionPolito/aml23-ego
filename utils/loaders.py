@@ -90,15 +90,15 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # end_frame = 500
         # indices_list = [80, 81, ..., 160]
 
-        sequence_len = self.num_frames_per_clip[modality]  * self.num_clips
+        sequence_len = self.num_frames_per_clip[modality] * self.num_clips
         if record.num_frames[modality] < sequence_len:
-            sequence_len = record.num_frames[modality]
+            sequence_len = len(record.num_frames[modality])
 
         logger.info("#### SEQUENCE_LEN:")
         logger.info(sequence_len)
         logger.info(record.start_frame)
         logger.info(record.end_frame)
-        sequence = list(index for index in range(record.start_frame, record.start_frame + sequence_len - 1))
+        sequence = list(index for index in range(1, sequence_len))
         return sequence
 
         #raise NotImplementedError("You should implement _get_val_indices")
@@ -162,6 +162,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
             # here the offset for the starting index of the sample is added
 
             idx_untrimmed = record.start_frame + idx
+            logger.info(str(record.start_frame) + " - " + str(idx) + " - " + str(idx_untrimmed))
             try:
                 img = Image.open(os.path.join(data_path, record.untrimmed_video_name, tmpl.format(idx_untrimmed))) \
                     .convert('RGB')
