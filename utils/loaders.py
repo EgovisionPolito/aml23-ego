@@ -90,7 +90,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # end_frame = 500
         # indices_list = [80, 81, ..., 160]
 
-        sequence_len = self.num_frames_per_clip  * self.num_clips
+        sequence_len = self.num_frames_per_clip[modality]  * self.num_clips
         sequence = list(index for index in range(record.start_frame, record.start_frame + sequence_len))
         return sequence
 
