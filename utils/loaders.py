@@ -92,12 +92,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
         sequence_len = self.num_frames_per_clip[modality] * self.num_clips
         if record.num_frames[modality] < sequence_len:
-            sequence_len = len(record.num_frames[modality])
-
-        logger.info("#### SEQUENCE_LEN:")
-        logger.info(sequence_len)
-        logger.info(record.start_frame)
-        logger.info(record.end_frame)
+            sequence_len = record.num_frames[modality]
         sequence = list(index for index in range(1, sequence_len))
         return sequence
 
