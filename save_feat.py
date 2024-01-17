@@ -33,7 +33,8 @@ def init_operations():
 def main():
     global modalities
     init_operations()
-    modalities = args.modality
+    modalities = args.modality  #!quali sono i CLI args?
+    print("args" + args)
 
     # recover valid paths, domains, classes
     # this will output the domain conversion (D1 -> 8, et cetera) and the label list
