@@ -97,6 +97,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
         logger.info("#### SEQUENCE_LEN:")
         logger.info(sequence_len)
         logger.info(record.start_frame)
+        logger.info(record.end_frame)
         sequence = list(index for index in range(record.start_frame, record.start_frame + sequence_len - 1))
         return sequence
 
