@@ -7,6 +7,7 @@ from PIL import Image
 import os
 import os.path
 from utils.logger import logger
+import numpy as np
 
 class EpicKitchensDataset(data.Dataset, ABC):
     def __init__(self, split, modalities, mode, dataset_conf, num_frames_per_clip, num_clips, dense_sampling,
@@ -87,17 +88,39 @@ class EpicKitchensDataset(data.Dataset, ABC):
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
 
-        sequence_len = self.num_frames_per_clip[modality] * self.num_clips # 16 * 5 in RGB = 80
-        if record.num_frames[modality] < sequence_len:                     # se lunghezza tot record (eg 60) < sequence_len (=80)
-            offset = sequence_len - record.num_frames[modality]            # 80 - 60 = 20
-            sequence_len = record.num_frames[modality]                     # =60
-            sequence = list(index for index in range(0, sequence_len))     # [0,.., 59]
-            #se il record ha meno di 80 frame (RGB) metto #offset frame duplicati
-            sequence.extend(index for index in range(0, offset))           # appende i numeri da 0 a offest-1 (20) -> [0,.., 59, 0,..,19]
+        ##* DENSE Sampling
+        record_num_frames = record.num_frames[modality]
+        num_frames_per_clip = self.num_frames_per_clip[modality]
+        desired_num_frames = num_frames_per_clip * self.num_clips
+        frames_interval = 2     #Dense Sampling
+        clip_radius = (num_frames_per_clip // 2) * frames_interval
+        sampled_frames_inidices_list = []
+
+        for clip_number in range(self.num_clips):
+            clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
+            #*Se volessimo una lista di array numpy dove ogni array ha i frame di una clip
+            #sampled_frames_indices = np.arange(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval)
+            #sampled_frames_inidices_list.append(sampled_frames_inidices_list)
+            #*Caso di una lista piatta con solo indici
+            clip_sampled_frames_inidices = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval))
+            sampled_frames_inidices_list.extend(clip_sampled_frames_inidices)
+
+        if(len(sampled_frames_inidices_list) == desired_num_frames):
+            return sampled_frames_inidices_list
         else:
-            sequence = list(index for index in range(0, sequence_len))     # [0,..,79]
+            raise SystemError(f"For the record {record.untrimmed_video_name}, the number of extracted frames is less than the desired {desired_num_frames} frames!")
+
+        # sequence_len = self.num_frames_per_clip[modality] * self.num_clips # 16 * 5 in RGB = 80
+        # if record.num_frames[modality] < sequence_len:                     # se lunghezza tot record (eg 60) < sequence_len (=80)
+        #     offset = sequence_len - record.num_frames[modality]            # 80 - 60 = 20
+        #     sequence_len = record.num_frames[modality]                     # =60
+        #     sequence = list(index for index in range(0, sequence_len))     # [0,.., 59]
+        #     #se il record ha meno di 80 frame (RGB) metto #offset frame duplicati
+        #     sequence.extend(index for index in range(0, offset))           # appende i numeri da 0 a offest-1 (20) -> [0,.., 59, 0,..,19]
+        # else:
+        #     sequence = list(index for index in range(0, sequence_len))     # [0,..,79]
         
-        return sequence
+        # return sequence
 
     def __getitem__(self, index):
 
