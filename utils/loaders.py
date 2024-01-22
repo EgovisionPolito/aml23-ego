@@ -92,9 +92,20 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
         sequence_len = self.num_frames_per_clip[modality] * self.num_clips
         if record.num_frames[modality] < sequence_len:
+            offset = sequence_len - record.num_frames[modality]
             sequence_len = record.num_frames[modality]
-        sequence = list(index for index in range(1, sequence_len))
+            sequence = list(index for index in range(0, sequence_len))
+            sequence.extend(index for index in range(0, offset))
+        else:
+            sequence = list(index for index in range(0, sequence_len))
+        
         return sequence
+
+        # sequence_len = self.num_frames_per_clip[modality] * self.num_clips
+        # if record.num_frames[modality] < sequence_len:
+        #     sequence_len = record.num_frames[modality]
+        # sequence = list(index for index in range(1, sequence_len))
+        # return sequence
 
         #raise NotImplementedError("You should implement _get_val_indices")
 
