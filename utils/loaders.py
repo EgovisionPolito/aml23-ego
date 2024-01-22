@@ -91,7 +91,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
         record_num_frames = record.num_frames[modality]
         num_frames_per_clip = self.num_frames_per_clip[modality]
         desired_num_frames = num_frames_per_clip * self.num_clips
-        frames_interval = 1     #Dense Sampling
+        frames_interval = 2     #Dense Sampling
         clip_radius = (num_frames_per_clip // 2) * frames_interval
         sampled_frames_inidices_list = []
 
