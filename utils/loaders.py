@@ -100,7 +100,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
             if((record_num_frames-clip_radius+2)<=clip_radius):
                 logger.info(f"Record_num_frames {record_num_frames}, clip_radius {clip_radius}, (record_num_frames-clip_radius+2)<=clip_radius = {(record_num_frames-clip_radius+2)<=clip_radius}")
                 frames_interval = 1
-                clip_radius = (num_frames_per_clip // 2) * frames_interval
+                #clip_radius = (num_frames_per_clip // 2) * frames_interval
             clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
             #*Se volessimo una lista di array numpy dove ogni array ha i frame di una clip
             #sampled_frames_indices = np.arange(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval)
