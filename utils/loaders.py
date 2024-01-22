@@ -86,28 +86,18 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-        # start_frame = 80
-        # end_frame = 500
-        # indices_list = [80, 81, ..., 160]
 
-        sequence_len = self.num_frames_per_clip[modality] * self.num_clips
-        if record.num_frames[modality] < sequence_len:
-            offset = sequence_len - record.num_frames[modality]
-            sequence_len = record.num_frames[modality]
-            sequence = list(index for index in range(0, sequence_len))
-            sequence.extend(index for index in range(0, offset))
+        sequence_len = self.num_frames_per_clip[modality] * self.num_clips # 16 * 5 in RGB = 80
+        if record.num_frames[modality] < sequence_len:                     # se lunghezza tot record (eg 60) < sequence_len (=80)
+            offset = sequence_len - record.num_frames[modality]            # 80 - 60 = 20
+            sequence_len = record.num_frames[modality]                     # =60
+            sequence = list(index for index in range(0, sequence_len))     # [0,.., 59]
+            #se il record ha meno di 80 frame (RGB) metto #offset frame duplicati
+            sequence.extend(index for index in range(0, offset))           # appende i numeri da 0 a offest-1 (20) -> [0,.., 59, 0,..,19]
         else:
-            sequence = list(index for index in range(0, sequence_len))
+            sequence = list(index for index in range(0, sequence_len))     # [0,..,79]
         
         return sequence
-
-        # sequence_len = self.num_frames_per_clip[modality] * self.num_clips
-        # if record.num_frames[modality] < sequence_len:
-        #     sequence_len = record.num_frames[modality]
-        # sequence = list(index for index in range(1, sequence_len))
-        # return sequence
-
-        #raise NotImplementedError("You should implement _get_val_indices")
 
     def __getitem__(self, index):
 
@@ -167,7 +157,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
         if modality == 'RGB' or modality == 'RGBDiff':
             # here the offset for the starting index of the sample is added
 
-            idx_untrimmed = record.start_frame + idx
+            idx_untrimmed = record.start_frame + idx    #start_frame decrementa di 1
             logger.info(str(record.start_frame) + " - " + str(idx) + " - " + str(idx_untrimmed))
             try:
                 img = Image.open(os.path.join(data_path, record.untrimmed_video_name, tmpl.format(idx_untrimmed))) \
