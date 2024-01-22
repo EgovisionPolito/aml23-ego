@@ -91,11 +91,11 @@ class EpicKitchensDataset(data.Dataset, ABC):
         record_num_frames = record.num_frames[modality]
         num_frames_per_clip = self.num_frames_per_clip[modality]
         desired_num_frames = num_frames_per_clip * self.num_clips
-        clip_radius = (num_frames_per_clip // 2) * frames_interval
         sampled_frames_inidices_list = []
 
         ##* DENSE Sampling
         frames_interval = 2
+        clip_radius = (num_frames_per_clip // 2) * frames_interval
         if record_num_frames > desired_num_frames:
             for clip_number in range(self.num_clips):
                     clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
@@ -126,9 +126,9 @@ class EpicKitchensDataset(data.Dataset, ABC):
                     sampled_frames_inidices_list.extend(clip_sampled_frames_inidices)
         else: #TODO: se il record ha troppi pochi frame non so bene come gestire la cosa, per ora prendo tutti quelli del record e duplico quelli che mancano... Si può migliorare
             offset = desired_num_frames - record_num_frames
-            clip_sampled_frames_inidices = list(index for index in range(0, record_num_frames))
-            clip_sampled_frames_inidices.extend(index for index in range(0, offset))
-            sampled_frames_inidices_list.extend(clip_sampled_frames_inidices)
+            clip_frames_inidices_list = list(index for index in range(0, record_num_frames))
+            clip_frames_inidices_list.extend(index for index in range(0, offset))
+            sampled_frames_inidices_list.extend(clip_frames_inidices_list)
 
         if(len(sampled_frames_inidices_list) == desired_num_frames):
             return sampled_frames_inidices_list
