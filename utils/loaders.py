@@ -88,7 +88,6 @@ class EpicKitchensDataset(data.Dataset, ABC):
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
 
-        ##* DENSE Sampling
         record_num_frames = record.num_frames[modality]
         num_frames_per_clip = self.num_frames_per_clip[modality]
         desired_num_frames = num_frames_per_clip * self.num_clips
@@ -96,7 +95,10 @@ class EpicKitchensDataset(data.Dataset, ABC):
         clip_radius = (num_frames_per_clip // 2) * frames_interval
         sampled_frames_inidices_list = []
 
+        ##* DENSE Sampling
         for clip_number in range(self.num_clips):
+            if((record_num_frames-clip_radius+2)<clip_radius):
+                logger.info(f"Record_num_frames {record_num_frames}, clip_radius {clip_radius}")
             clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
             #*Se volessimo una lista di array numpy dove ogni array ha i frame di una clip
             #sampled_frames_indices = np.arange(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval)
@@ -109,6 +111,8 @@ class EpicKitchensDataset(data.Dataset, ABC):
             return sampled_frames_inidices_list
         else:
             raise SystemError(f"For the record {record.untrimmed_video_name}, the number of extracted frames is less than the desired {desired_num_frames} frames!")
+
+        ##* UNIFORM Sampling
 
         # sequence_len = self.num_frames_per_clip[modality] * self.num_clips # 16 * 5 in RGB = 80
         # if record.num_frames[modality] < sequence_len:                     # se lunghezza tot record (eg 60) < sequence_len (=80)
