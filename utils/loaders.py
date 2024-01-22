@@ -96,23 +96,21 @@ class EpicKitchensDataset(data.Dataset, ABC):
         sampled_frames_inidices_list = []
 
         ##* DENSE Sampling
-        for clip_number in range(self.num_clips):
-            if(record_num_frames>desired_num_frames):
-                clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
-                clip_sampled_frames_inidices = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval))
-            else:
-                offset = desired_num_frames - record_num_frames
-                clip_sampled_frames_inidices = list(index for index in range(0, record_num_frames))
-                clip_sampled_frames_inidices.extend(index for index in range(0, offset))
+        if(record_num_frames > desired_num_frames):
+            for clip_number in range(self.num_clips):
+                    clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
+                    clip_sampled_frames_inidices = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval))
+                    #*Caso di una lista piatta con solo indici
+                    sampled_frames_inidices_list.extend(clip_sampled_frames_inidices)
+        else:
+            offset = desired_num_frames - record_num_frames
+            clip_sampled_frames_inidices = list(index for index in range(0, record_num_frames))
+            clip_sampled_frames_inidices.extend(index for index in range(0, offset))
 
-            #     frames_interval = 1
-            #     clip_radius = (num_frames_per_clip // 2) * frames_interval
             #     logger.info(f"Record_num_frames {record_num_frames}, clip_radius {clip_radius}, (record_num_frames-clip_radius+2)<=clip_radius = {(record_num_frames-clip_radius+2)}")
             #*Se volessimo una lista di array numpy dove ogni array ha i frame di una clip
             #sampled_frames_indices = np.arange(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval)
             #sampled_frames_inidices_list.append(sampled_frames_inidices_list)
-            #*Caso di una lista piatta con solo indici
-            sampled_frames_inidices_list.extend(clip_sampled_frames_inidices)
 
         if(len(sampled_frames_inidices_list) == desired_num_frames):
             return sampled_frames_inidices_list
