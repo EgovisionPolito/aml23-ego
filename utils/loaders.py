@@ -143,6 +143,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
 
         if(len(sampled_frames_inidices_list) < desired_num_frames):
+            logger.info(f"record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
             raise SystemError(f"For the record {record.untrimmed_video_name}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is less than the desired {desired_num_frames} frames!")
         elif(len(sampled_frames_inidices_list) > desired_num_frames):
             logger.info(f"record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
