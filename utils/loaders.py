@@ -128,8 +128,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
                     start_index = clip_number * clips_interval #0, 60, 120, 180, 240
                     end_index = (clip_number + 1) * clips_interval   #60, 120, 180, 240, 300
                     clip_frames_inidices_list = np.arange(start_index, end_index, frames_interval)   #[0,4,8,..,56,60], [60,..,120], [120,..,180], [180,..,240], [240,..,300]
-                    clip_frames_indices_list = clip_frames_indices_list[:16]
-                    sampled_frames_inidices_list.extend(clip_frames_inidices_list) 
+                    sampled_frames_inidices_list.extend(clip_frames_inidices_list[:16]) 
         else: #TODO: se il record ha troppi pochi frame non so bene come gestire la cosa, per ora prendo tutti quelli del record e duplico quelli che mancano... Si può migliorare
             offset = desired_num_frames - record_num_frames
             clip_frames_inidices_list = list(index for index in range(0, record_num_frames))
