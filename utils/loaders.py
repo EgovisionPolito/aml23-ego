@@ -97,7 +97,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
         ##* DENSE Sampling
         for clip_number in range(self.num_clips):
-            if((record_num_frames-clip_radius+2)>clip_radius):
+            if((record_num_frames-clip_radius+2)>=clip_radius):
                 clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
                 clip_sampled_frames_inidices = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval))
             else:
