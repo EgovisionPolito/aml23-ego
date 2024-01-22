@@ -124,7 +124,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
         ##* UNIFORM Sampling
         if record_num_frames > desired_num_frames:  #if record_num_frames=300
             clips_interval = record_num_frames//self.num_clips #300/5=60 #arrotondo per difetto
-            frames_interval = clips_interval//num_frames_per_clip #60/16=4 31/16
+            frames_interval = math.ceil(clips_interval//num_frames_per_clip) #60/16=4 #per eccesso
             for clip_number in range(self.num_clips):   #clip_number va da 0 a 4 inclusi
                     start_index = clip_number * clips_interval #0, 60, 120, 180, 240
                     end_index = (clip_number + 1) * clips_interval   #60, 120, 180, 240, 300
