@@ -114,7 +114,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
                 clip_frames_inidices_list.extend(index for index in range(0, offset))
                 sampled_frames_inidices_list.extend(clip_frames_inidices_list)
         else:
-        ##* UNIFORM Sampling
+            ##* UNIFORM Sampling
             if record_num_frames > desired_num_frames:  #if record_num_frames=300
                 clips_interval = round(record_num_frames/self.num_clips) #300/5=60 #arrotondo per difetto
                 frames_interval = clips_interval//num_frames_per_clip #60/16=4 #per eccesso
@@ -131,13 +131,13 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
 
         if(len(sampled_frames_inidices_list) < desired_num_frames):
-            logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+            #DEBUG  #logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
             raise SystemError(f"For the record {record.untrimmed_video_name} {record.uid}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is less than the desired {desired_num_frames} frames!")
         elif(len(sampled_frames_inidices_list) > desired_num_frames):
-            logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+            #DEBUG  #logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
             raise SystemError(f"For the record {record.untrimmed_video_name} {record.uid}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is more than the desired {desired_num_frames} frames!")
         else:
-            logger.info(f"{record.untrimmed_video_name} {record.uid} - record_num_frames: {record_num_frames}, sampled_frames_inidices_list: {sampled_frames_inidices_list}")
+            #DEBUG  #logger.info(f"{record.untrimmed_video_name} {record.uid} - record_num_frames: {record_num_frames}, sampled_frames_inidices_list: {sampled_frames_inidices_list}")
             return sampled_frames_inidices_list
 
         # sequence_len = self.num_frames_per_clip[modality] * self.num_clips # 16 * 5 in RGB = 80
