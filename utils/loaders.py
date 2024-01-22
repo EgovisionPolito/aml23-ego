@@ -8,6 +8,7 @@ import os
 import os.path
 from utils.logger import logger
 import numpy as np
+import math
 
 class EpicKitchensDataset(data.Dataset, ABC):
     def __init__(self, split, modalities, mode, dataset_conf, num_frames_per_clip, num_clips, dense_sampling,
@@ -118,10 +119,12 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # else:
         #     return sampled_frames_inidices_list
 
+
+
         ##* UNIFORM Sampling
         if record_num_frames > desired_num_frames:  #if record_num_frames=300
-            clips_interval = record_num_frames//self.num_clips   #300/5=60
-            frames_interval = clips_interval//num_frames_per_clip #60/16=4
+            clips_interval = math.floor(record_num_frames//self.num_clips) #300/5=60 #arrotondo per difetto
+            frames_interval = clips_interval//num_frames_per_clip #60/16=4 
             for clip_number in range(self.num_clips):   #clip_number va da 0 a 4 inclusi
                     start_index = clip_number * clips_interval #0, 60, 120, 180, 240
                     end_index = (clip_number + 1) * clips_interval   #60, 120, 180, 240, 300
@@ -132,6 +135,12 @@ class EpicKitchensDataset(data.Dataset, ABC):
             clip_frames_inidices_list = list(index for index in range(0, record_num_frames))
             clip_frames_inidices_list.extend(index for index in range(0, offset))
             sampled_frames_inidices_list.extend(clip_frames_inidices_list)
+
+
+
+
+
+
 
         if(len(sampled_frames_inidices_list) < desired_num_frames):
             raise SystemError(f"For the record {record.untrimmed_video_name}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is less than the desired {desired_num_frames} frames!")
