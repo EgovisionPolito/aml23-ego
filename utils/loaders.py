@@ -97,7 +97,8 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
         ##* DENSE Sampling
         for clip_number in range(self.num_clips):
-            # if((record_num_frames-clip_radius+2)<=clip_radius):
+            if((record_num_frames-clip_radius+2)<=clip_radius):
+                break
             #     frames_interval = 1
             #     clip_radius = (num_frames_per_clip // 2) * frames_interval
             #     logger.info(f"Record_num_frames {record_num_frames}, clip_radius {clip_radius}, (record_num_frames-clip_radius+2)<=clip_radius = {(record_num_frames-clip_radius+2)}")
