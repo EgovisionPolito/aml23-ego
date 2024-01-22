@@ -128,7 +128,9 @@ class EpicKitchensDataset(data.Dataset, ABC):
                     start_index = clip_number * clips_interval #0, 60, 120, 180, 240
                     end_index = (clip_number + 1) * clips_interval   #60, 120, 180, 240, 300
                     clip_frames_inidices_list = np.arange(start_index, end_index, frames_interval)   #[0,4,8,..,56,60], [60,..,120], [120,..,180], [180,..,240], [240,..,300]
-                    sampled_frames_inidices_list.extend(clip_frames_inidices_list[:16]) 
+                    sampled_frames_inidices_list.extend(clip_frames_inidices_list[:16])
+                    logger.info(f"{record.untrimmed_video_name} {record.uid} - clip: {clip_number}, sampled_frames_inidices_list: {sampled_frames_inidices_list}")
+
         else: #TODO: se il record ha troppi pochi frame non so bene come gestire la cosa, per ora prendo tutti quelli del record e duplico quelli che mancano... Si può migliorare
             offset = desired_num_frames - record_num_frames
             clip_frames_inidices_list = list(index for index in range(0, record_num_frames))
@@ -143,10 +145,10 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
         if(len(sampled_frames_inidices_list) < desired_num_frames):
             logger.info(f"{record.untrimmed_video_name} - record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
-            raise SystemError(f"For the record {record.untrimmed_video_name}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is less than the desired {desired_num_frames} frames!")
+            raise SystemError(f"For the record {record.untrimmed_video_name} {record.uid}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is less than the desired {desired_num_frames} frames!")
         elif(len(sampled_frames_inidices_list) > desired_num_frames):
             logger.info(f"{record.untrimmed_video_name} - record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
-            raise SystemError(f"For the record {record.untrimmed_video_name}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is more than the desired {desired_num_frames} frames!")
+            raise SystemError(f"For the record {record.untrimmed_video_name} {record.uid}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is more than the desired {desired_num_frames} frames!")
         else:
             return sampled_frames_inidices_list
 
