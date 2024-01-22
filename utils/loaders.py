@@ -123,8 +123,8 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
         ##* UNIFORM Sampling
         if record_num_frames > desired_num_frames:  #if record_num_frames=300
-            clips_interval = math.floor(record_num_frames//self.num_clips) #300/5=60 #arrotondo per difetto
-            frames_interval = clips_interval//num_frames_per_clip #60/16=4 
+            clips_interval = record_num_frames//self.num_clips #300/5=60 #arrotondo per difetto
+            frames_interval = clips_interval//num_frames_per_clip #60/16=4 31/16
             for clip_number in range(self.num_clips):   #clip_number va da 0 a 4 inclusi
                     start_index = clip_number * clips_interval #0, 60, 120, 180, 240
                     end_index = (clip_number + 1) * clips_interval   #60, 120, 180, 240, 300
@@ -145,7 +145,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
         if(len(sampled_frames_inidices_list) < desired_num_frames):
             raise SystemError(f"For the record {record.untrimmed_video_name}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is less than the desired {desired_num_frames} frames!")
         elif(len(sampled_frames_inidices_list) > desired_num_frames):
-            logger.info(f"record_num_frames: {record_num_frames}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+            logger.info(f"record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
             raise SystemError(f"For the record {record.untrimmed_video_name}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is more than the desired {desired_num_frames} frames!")
         else:
             return sampled_frames_inidices_list
