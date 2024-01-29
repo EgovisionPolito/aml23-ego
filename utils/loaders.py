@@ -97,22 +97,24 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
         if DENSE:
             ##* DENSE Sampling
-            frames_interval = 1
-            clip_radius = (num_frames_per_clip // 2) * frames_interval
-            if record_num_frames > desired_num_frames:
-                for clip_number in range(self.num_clips):
-                        clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
-                        clip_frames_inidices_list = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval))
-                        #*Se volessimo una lista di array numpy dove ogni array ha i frame di una clip
-                        #clip_frames_indices_list = np.arange(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval)
-                        #sampled_frames_inidices_list.append(clip_frames_indices_list)
-                        #*Caso di una lista piatta con solo indici
-                        sampled_frames_inidices_list.extend(clip_frames_inidices_list)
-            else: #TODO: se il record ha troppi pochi frame non so bene come gestire la cosa, per ora prendo tutti quelli del record e duplico quelli che mancano... Si può migliorare
-                offset = desired_num_frames - record_num_frames
-                clip_frames_inidices_list = list(index for index in range(0, record_num_frames))
-                clip_frames_inidices_list.extend(index for index in range(0, offset))
-                sampled_frames_inidices_list.extend(clip_frames_inidices_list)
+            # frames_interval = 1
+            # clip_radius = (num_frames_per_clip // 2) * frames_interval
+            clip_radius = (num_frames_per_clip // 2)
+            # if record_num_frames > desired_num_frames:
+            for clip_number in range(self.num_clips):
+                    clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
+                    # clip_frames_inidices_list = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval))
+                    clip_frames_inidices_list = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius))
+                    #*Se volessimo una lista di array numpy dove ogni array ha i frame di una clip
+                    #clip_frames_indices_list = np.arange(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval)
+                    #sampled_frames_inidices_list.append(clip_frames_indices_list)
+                    #*Caso di una lista piatta con solo indici
+                    sampled_frames_inidices_list.extend(clip_frames_inidices_list)
+            # else: #TODO: se il record ha troppi pochi frame non so bene come gestire la cosa, per ora prendo tutti quelli del record e duplico quelli che mancano... Si può migliorare
+            #     offset = desired_num_frames - record_num_frames
+            #     clip_frames_inidices_list = list(index for index in range(0, record_num_frames))
+            #     clip_frames_inidices_list.extend(index for index in range(0, offset))
+            #     sampled_frames_inidices_list.extend(clip_frames_inidices_list)
         else:
             ##* UNIFORM Sampling
             #TODO: PARTI DA UN PUNTO CENTRALE RANDOMICO E POI CON UN EURISTICA BASATA AD ES. SU LUNGHEZZA RECORD CALCOLA LA FINESTRA
