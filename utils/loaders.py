@@ -97,7 +97,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
         if DENSE:
             ##* DENSE Sampling
-            frames_interval = 2
+            frames_interval = 1
             clip_radius = (num_frames_per_clip // 2) * frames_interval
             if record_num_frames > desired_num_frames:
                 for clip_number in range(self.num_clips):
@@ -115,6 +115,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
                 sampled_frames_inidices_list.extend(clip_frames_inidices_list)
         else:
             ##* UNIFORM Sampling
+            #TODO: PARTI DA UN PUNTO CENTRALE RANDOMICO E POI CON UN EURISTICA BASATA AD ES. SU LUNGHEZZA RECORD CALCOLA LA FINESTRA
             if record_num_frames > desired_num_frames:  #if record_num_frames=300
                 clips_interval = round(record_num_frames/self.num_clips) #300/5=60 #arrotondo per difetto
                 frames_interval = clips_interval//num_frames_per_clip #60/16=4 #per eccesso
