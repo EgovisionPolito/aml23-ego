@@ -127,7 +127,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
                 for clip_number in range(self.num_clips):
                         clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2)
                         clip_frames_inidices_list = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius+1, frames_interval))
-                        sampled_frames_inidices_list.extend(clip_frames_inidices_list)
+                        sampled_frames_inidices_list.extend(clip_frames_inidices_list[:num_frames_per_clip])
                 logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clip_radius: {clip_radius}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
                 # logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clip_radius}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
 
