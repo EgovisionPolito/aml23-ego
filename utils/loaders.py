@@ -9,8 +9,6 @@ import os.path
 from utils.logger import logger
 import numpy as np
 
-counter = 0
-
 class EpicKitchensDataset(data.Dataset, ABC):
     def __init__(self, split, modalities, mode, dataset_conf, num_frames_per_clip, num_clips, dense_sampling,
                  transform=None, load_feat=False, additional_info=False, **kwargs):
@@ -89,7 +87,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-
+        counter = 0
         DENSE = False
 
         record_num_frames = record.num_frames[modality]
