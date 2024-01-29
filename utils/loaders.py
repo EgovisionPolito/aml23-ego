@@ -9,6 +9,8 @@ import os.path
 from utils.logger import logger
 import numpy as np
 
+counter = 0
+
 class EpicKitchensDataset(data.Dataset, ABC):
     def __init__(self, split, modalities, mode, dataset_conf, num_frames_per_clip, num_clips, dense_sampling,
                  transform=None, load_feat=False, additional_info=False, **kwargs):
@@ -117,10 +119,12 @@ class EpicKitchensDataset(data.Dataset, ABC):
             #     sampled_frames_inidices_list.extend(clip_frames_inidices_list)
         else:
             ##* UNIFORM Sampling
-
+            counter= counter + 1
             def uniform_sampling(clip_window):
                 clip_radius = (clip_window // 2)
                 frames_interval = clip_window//num_frames_per_clip
+                if counter:
+                    logger.info(f"clip_radius: {clip_radius}")
                 for clip_number in range(self.num_clips):
                         clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2)
                         clip_frames_inidices_list = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval))
@@ -130,7 +134,7 @@ class EpicKitchensDataset(data.Dataset, ABC):
             #clip_radius = (clip_window // 2)
             #frames_interval = clip_window//num_frames_per_clip
             #if clip_window == 75:
-            logger.info(f"clip_radius: {clip_radius}")
+            
 
             if record_num_frames >= 75: #*OK
                 uniform_sampling(75)    
