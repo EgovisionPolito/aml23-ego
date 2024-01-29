@@ -121,12 +121,16 @@ class EpicKitchensDataset(data.Dataset, ABC):
             def uniform_sampling(clip_window):
                 clip_radius = (clip_window // 2)
                 frames_interval = clip_window//num_frames_per_clip
+
                 if counter:
                     logger.info(f"clip_radius: {clip_radius}")
                 for clip_number in range(self.num_clips):
                         clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2)
                         clip_frames_inidices_list = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval))
                         sampled_frames_inidices_list.extend(clip_frames_inidices_list)
+                logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clip_radius: {clip_radius}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+                # logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clip_radius}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+
             
             # clip_radius = (num_frames_per_clip // 2) * frames_interval
             #clip_radius = (clip_window // 2)
@@ -163,11 +167,11 @@ class EpicKitchensDataset(data.Dataset, ABC):
 
         if(len(sampled_frames_inidices_list) < desired_num_frames):
             #DEBUG  
-            logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+            # logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
             raise SystemError(f"For the record {record.untrimmed_video_name} {record.uid}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is less than the desired {desired_num_frames} frames!")
         elif(len(sampled_frames_inidices_list) > desired_num_frames):
             #DEBUG  
-            logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+            # logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
             raise SystemError(f"For the record {record.untrimmed_video_name} {record.uid}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is more than the desired {desired_num_frames} frames!")
         else:
             #DEBUG
