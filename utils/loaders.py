@@ -117,20 +117,46 @@ class EpicKitchensDataset(data.Dataset, ABC):
             #     sampled_frames_inidices_list.extend(clip_frames_inidices_list)
         else:
             ##* UNIFORM Sampling
-            #TODO: PARTI DA UN PUNTO CENTRALE RANDOMICO E POI CON UN EURISTICA BASATA AD ES. SU LUNGHEZZA RECORD CALCOLA LA FINESTRA
-            if record_num_frames > desired_num_frames:  #if record_num_frames=300
-                clips_interval = round(record_num_frames/self.num_clips) #300/5=60 #arrotondo per difetto
-                frames_interval = clips_interval//num_frames_per_clip #60/16=4 #per eccesso
-                for clip_number in range(self.num_clips):   #clip_number va da 0 a 4 inclusi
-                        start_index = clip_number * clips_interval #0, 60, 120, 180, 240
-                        end_index = (clip_number + 1) * clips_interval   #60, 120, 180, 240, 300
-                        clip_frames_inidices_list = np.arange(start_index, end_index, frames_interval)   #[0,4,8,..,56,60], [60,..,120], [120,..,180], [180,..,240], [240,..,300]
-                        sampled_frames_inidices_list.extend(clip_frames_inidices_list[:16])
-            else: #TODO: se il record ha troppi pochi frame non so bene come gestire la cosa, per ora prendo tutti quelli del record e duplico quelli che mancano... Si può migliorare
-                offset = desired_num_frames - record_num_frames
-                clip_frames_inidices_list = list(index for index in range(0, record_num_frames))
-                clip_frames_inidices_list.extend(index for index in range(0, offset))
-                sampled_frames_inidices_list.extend(clip_frames_inidices_list)
+
+            def uniform_sampling(clip_window):
+                clip_radius = (clip_window // 2)
+                frames_interval = clip_window//num_frames_per_clip
+                for clip_number in range(self.num_clips):
+                        clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2)
+                        clip_frames_inidices_list = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval))
+                        sampled_frames_inidices_list.extend(clip_frames_inidices_list)
+            
+            # clip_radius = (num_frames_per_clip // 2) * frames_interval
+            #clip_radius = (clip_window // 2)
+            #frames_interval = clip_window//num_frames_per_clip
+            #if clip_window == 75:
+            logger.info(f"clip_radius: {clip_radius}")
+
+            if record_num_frames >= 75: #*OK
+                uniform_sampling(75)    
+            elif record_num_frames>=50: #TODO: se il record ha troppi pochi frame non so bene come gestire la cosa, per ora prendo tutti quelli del record e duplico quelli che mancano... Si può migliorare
+                uniform_sampling(50)
+            elif record_num_frames>=25:
+                uniform_sampling(25)
+            else:
+                raise SystemError(f"The record {record.untrimmed_video_name} {record.uid}, has less than 25 frames!")
+
+
+
+            # #TODO: PARTI DA UN PUNTO CENTRALE RANDOMICO E POI CON UN EURISTICA BASATA AD ES. SU LUNGHEZZA RECORD CALCOLA LA FINESTRA
+            # if record_num_frames > desired_num_frames:  #if record_num_frames=300
+            #     clips_interval = round(record_num_frames/self.num_clips) #300/5=60 #arrotondo per difetto
+            #     frames_interval = clips_interval//num_frames_per_clip #60/16=4 #per eccesso
+            #     for clip_number in range(self.num_clips):   #clip_number va da 0 a 4 inclusi
+            #             start_index = clip_number * clips_interval #0, 60, 120, 180, 240
+            #             end_index = (clip_number + 1) * clips_interval   #60, 120, 180, 240, 300
+            #             clip_frames_inidices_list = np.arange(start_index, end_index, frames_interval)   #[0,4,8,..,56,60], [60,..,120], [120,..,180], [180,..,240], [240,..,300]
+            #             sampled_frames_inidices_list.extend(clip_frames_inidices_list[:16])
+            # else: #TODO: se il record ha troppi pochi frame non so bene come gestire la cosa, per ora prendo tutti quelli del record e duplico quelli che mancano... Si può migliorare
+            #     offset = desired_num_frames - record_num_frames
+            #     clip_frames_inidices_list = list(index for index in range(0, record_num_frames))
+            #     clip_frames_inidices_list.extend(index for index in range(0, offset))
+            #     sampled_frames_inidices_list.extend(clip_frames_inidices_list)
 
 
         if(len(sampled_frames_inidices_list) < desired_num_frames):
