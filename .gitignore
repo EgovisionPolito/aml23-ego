@@ -1,2 +1,4 @@
 .DS_Store
 saved_features/*
+*/__pycache__/*
+Experiment_logs
