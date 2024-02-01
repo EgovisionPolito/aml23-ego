@@ -2,3 +2,4 @@
 saved_features/*
 */__pycache__/*
 Experiment_logs
+saved_models
