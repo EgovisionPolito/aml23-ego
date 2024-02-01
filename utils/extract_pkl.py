@@ -2,7 +2,6 @@ import pickle
 
 # * Setup for extrated features
 
-# Replace 'your_file.pkl' with the path to your .pkl file
 input_pkl_folder = [
     "saved_features/test_D5.pkl",
     "saved_features/test_D10.pkl",
@@ -12,7 +11,6 @@ input_pkl_folder = [
     "saved_features/test_U25.pkl",
 ]
 
-# Replace 'output_file.txt' with the desired name for the output .txt file
 output_txt_folder = [
     "saved_features/test_D5.txt",
     "saved_features/test_D10.txt",

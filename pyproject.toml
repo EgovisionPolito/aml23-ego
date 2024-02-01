@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "aml23-ego"
+version = "0.1.0"
+description = "Environment used in Advanced ML project 2023-2024"
+authors = ["Nicola Gutierrez"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
