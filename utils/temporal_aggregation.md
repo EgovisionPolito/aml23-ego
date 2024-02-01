@@ -1,15 +1,27 @@
-Considering a pyTorch context, having a folder with fles pkl where extracted features are stored, how can I
-achieve this goal of aggregate them along a temporal axis?
-In PyTorch, to aggregate extracted features stored as .pkl files along the temporal axis, you could:
-
 # Steps
-In PyTorch, to aggregate extracted features stored as `.pkl` files along the temporal axis, you could:
+In PyTorch, to aggregate extracted features stored as `.pkl` files along the temporal axis, a possible approach:
 
-1. **Load the Data**:
-   Use `pickle` to load your `.pkl` files into PyTorch tensors.
+1. **Load the Data**: Use `pickle` to load your `.pkl` files into PyTorch tensors.
 
-2. **Create a DataLoader**:
-   Organize these tensors into a `Dataset` and use a `DataLoader` to batch and shuffle the data if necessary.
+2. **Create a DataLoader**:  Organize these tensors into a `Dataset` and use a `DataLoader` to batch and shuffle the data if necessary.
+    <details>
+        <summary> Point 2 details </summary>
+
+    To convert data from a pickle (pkl) file into a PyTorch dataset, it is necessary to define a custom dataset class that extends `torch.utils.data.Dataset`:
+
+    1. **Assuming Data loaded from Pickle File**
+
+    2. **Define Custom Dataset Class:**
+    - Create a custom dataset class that extends `torch.utils.data.Dataset`.
+    - Implement the `__init__`, `__len__`, and `__getitem__` methods.
+
+    3. **Implement Dataset Methods:**
+    - In the `__init__` method, store the loaded data and perform any necessary preprocessing.
+    - In the `__len__` method, return the total number of samples in your dataset.
+    - In the `__getitem__` method, retrieve and return a specific sample from the dataset.
+
+    The `__getitem__` method is where you'll perform any necessary preprocessing or data transformation based on your specific requirements.
+    </details><br />
 
 3. **Define a Model**:
    Create a PyTorch model that includes layers like `nn.Conv1d` or `nn.MaxPool1d` for temporal aggregation.
@@ -38,20 +50,10 @@ To use the `data` object (considering data as the object where the file .pkl is 
 
 3. **Define Model**: Create a PyTorch model with layers like `nn.Conv1d`, activation functions, (optional) pooling layers, and fully connected layers.
 
-4. **Training**: Train your model using the DataLoader, by feeding batches of data into your model and updating the model's weights based on the loss between the output and your ground truth.
+4. **Training**: Train the model using the DataLoader, by feeding batches of data into your model and updating the model's weights based on the loss between the output and your ground truth.
 
-Here's a high-level structure to implement the above steps:
-```python
-class MyDataset(Dataset):
-    def __init__(self, data):
-        self.data = ... # convert your data['features'] to the correct tensor shape
-        
-    def __len__(self):
-        return len(self.data)
-    
-    def __getitem__(self, idx):
-        return self.data[idx]
-        
+Draft code:
+```python        
 class TemporalModel(nn.Module):
     def __init__(self):
         super(TemporalModel, self).__init__()
@@ -63,19 +65,20 @@ class TemporalModel(nn.Module):
         # pass through more layers
         return x
 
-# Load data
-data = ... # your loaded data
-dataset = MyDataset(data)
-dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-# Model
-model = TemporalModel()
+def aggregate_features():
+    # Assuming these steps already done:
+    # Step 1: load data
+    # Step 2: create dataset and dataloader
 
-# Training loop
-for epoch in range(num_epochs):
-    for batch in dataloader:
-        output = model(batch)
-        # compute loss, backpropagate, update model weights
+    # Model
+    model = TemporalModel()
+
+    # Training loop
+    for epoch in range(num_epochs):
+        for batch in dataloader:
+            output = model(batch)
+            # compute loss, backpropagate, update model weights
 ```
 
-Remember to adjust parameters, shapes, and layers according to your specific requirements and the structure of your data.
+Note: adjust parameters, shapes, and layers according to your specific requirements and the structure of your data.
