@@ -1,8 +1,8 @@
 import torch
-from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
 import pickle
 import os
+from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
 
 extracted_features_path = "saved_features"
 
@@ -23,13 +23,14 @@ class PklDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, index):
-        sample = self.data[index]
+        sample = self.data["features"][index]
 
-        # ToDo: use the actual parameters of the data
-        data = torch.tensor(sample["data"], dtype=torch.float32)
-        label = torch.tensor(sample["label"], dtype=torch.long)
+        # ToDo: handle of different features (instead of RGB) is missing
+        uid = sample["uid"]
+        video_name = sample["video_name"]
+        features = torch.tensor(sample["features_RGB"], dtype=torch.float32)
 
-        return data, label
+        return uid, video_name, features
 
 
 def aggregate_features():
@@ -44,6 +45,11 @@ def aggregate_features():
         for file in input_pkl_folder:
             # * Step 1: Load data from pickle file
             pkl_dataset = PklDataset(file)
+
+            """ # Example of how to use the dataset
+            for uid, video_name, features in pkl_dataset:
+                # do something
+            """
 
             # * Step 2: Create DataLoader
             data_loader = DataLoader(pkl_dataset, batch_size=batch_size, shuffle=True)
