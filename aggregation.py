@@ -16,7 +16,7 @@ if __name__ == "__main__":
     extract_pkl(pkl_folder)
 
     data = np.array((get_data_from_pkl("saved_features/test_D5"))['features'])
-    data_aggregated = np.array((get_data_from_pkl(pkl_folder[0]))['features'])
+    data_aggregated = np.array((get_data_from_pkl("aggregated_features/aggregated_test_D5"))['features'])
 
     print(f"\nData shape: {data.shape}")
     print(f"Data aggregated shape: {data_aggregated.shape}")

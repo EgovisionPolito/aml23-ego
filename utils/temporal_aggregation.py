@@ -3,7 +3,6 @@ import numpy as np
 import pickle
 import os
 from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
 from models.TemporalModel import TemporalModel
 
 
@@ -29,14 +28,12 @@ class PklDataset(Dataset):
         uid = sample["uid"]
         video_name = sample["video_name"]
         features = torch.tensor(sample["features_RGB"], dtype=torch.float32)
-        # features = features.view(32, 5, 1024)  # ? assuming batch_size = 32
 
         return uid, video_name, features
 
 
 def aggregate_features():
     extracted_features_path = "saved_features"
-    batch_size = 32  # ToDo: adjust batch size, now it's just a random number
 
     # get list of files in the folder of extracted features (filtering out non .pkl files)
     input_pkl_folder = list(
@@ -47,37 +44,25 @@ def aggregate_features():
         # * Step 1: Load data from pickle file -> each sample has to be a dictionary with keys: uid, video_name, features(w/ shape 5,1024)
         pkl_dataset = PklDataset(f"{extracted_features_path}/{file}")
 
-        # * Step 2: Create DataLoader
-        dataloader = DataLoader(pkl_dataset, batch_size=batch_size, shuffle=True)
-
-        # * Step 3 & 4: Create model and aggregate features along temporal axis
-        # ToDo: adjust model parameters (probably the shape of the dataloader should be used (?))
+        # * Step 2 & 3: Create model and aggregate features along temporal axis
         input_channels = 5
-        output_classes = 1
-        conv1d_channels = 64
-        fc_hidden_units = 128
-        sequence_length = 1024 # based on the shape of features
-        num_epochs = 1
+        conv1d_channels = 1
 
         model = TemporalModel(
             input_channels,
-            output_classes,
             conv1d_channels,
-            fc_hidden_units,
-            sequence_length,
+            mode="avg",
         )
 
         aggregated_features = {"features": []}
-        for epoch in range(num_epochs):
-            temp_features = []
-            for batch in dataloader:
-                _, _, features = batch
+        temp_features = []
+        for _, _, features in pkl_dataset:
 
-                # Forward pass
-                outputs = model(features)
+            # Forward pass
+            outputs = model(features)
 
-                # ? cpu() -> move data from GPU to CPU, necessary for numpy conversion
-                temp_features.append(outputs.detach().cpu().numpy())
+            # ? cpu() -> move data from GPU to CPU, necessary for numpy conversion
+            temp_features.append(outputs.detach().cpu().numpy())
 
         temp_features = np.concatenate(temp_features, axis=0)
         aggregated_features["features"].append(temp_features)
