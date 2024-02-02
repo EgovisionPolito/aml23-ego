@@ -141,6 +141,7 @@ def save_feat(model, loader, device, it, num_classes):
                                                     args.dataset.shift.split("-")[1] + "_" +
                                                     args.split + ".pkl"), 'wb'))
         
+        os.makedirs("aggregated_features", exist_ok=True)
         aggregate_features() # Temporary aggregation of features
 
         class_accuracies = [(x / y) * 100 for x, y in zip(model.accuracy.correct, model.accuracy.total)]

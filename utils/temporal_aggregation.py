@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import pickle
 import os
+from utils.logger import logger
 from torch.utils.data import Dataset
 from models.TemporalModel import TemporalModel
 
@@ -33,7 +34,7 @@ class PklDataset(Dataset):
 
 
 def aggregate_features():
-    extracted_features_path = "saved_features"
+    extracted_features_path = "/content/aml23-ego/saved_features"
 
     # get list of files in the folder of extracted features (filtering out non .pkl files)
     input_pkl_folder = list(
@@ -68,8 +69,9 @@ def aggregate_features():
         aggregated_features["features"].append(temp_features)
 
         try:
-            with open(f"aggregated_features/aggregated_{file}", "wb") as f:
+            with open(f"/content/aml23-ego/aggregated_features/aggregated_{file}", "wb") as f:
                 pickle.dump(aggregated_features, f)
+            logger.info("Aggregation: OK")
         except Exception as e:
             print(f"An error occurred: {str(e)}")
 

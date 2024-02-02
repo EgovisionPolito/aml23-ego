@@ -3,7 +3,7 @@ In PyTorch, to aggregate extracted features stored as `.pkl` files along the tem
 
 1. **Load the Data**: Use `pickle` to load your `.pkl` files into PyTorch tensors.
 
-2. **Create a DataLoader**:  Organize these tensors into a `Dataset` and use a `DataLoader` to batch and shuffle the data if necessary.
+2. **Create a Dataset**:  Organize these tensors into a `Dataset`
     <details>
         <summary> Point 2 details </summary>
 
@@ -24,7 +24,7 @@ In PyTorch, to aggregate extracted features stored as `.pkl` files along the tem
     </details><br />
 
 3. **Define a Model**:
-   Create a PyTorch model that includes layers like `nn.Conv1d` or `nn.MaxPool1d` for temporal aggregation.
+   Create a PyTorch model that includes layers like `nn.Conv1d` or `nn.AvgPool1d` for temporal aggregation.
 
 4. **Feed Data Through Model**:
    Pass your loaded data through the model. The convolutional or pooling layers will aggregate features across the temporal dimension.
@@ -36,49 +36,17 @@ In PyTorch, while a simple model with just an `nn.Conv1d` layer can perform temp
 
 1. **Conv1d Layer**: To aggregate temporal features. The number of input channels should match the feature dimension of your data.
 2. **Activation Function**: Like ReLU, to introduce non-linearity.
-3. **Pooling Layer**: (Optional) To downsample the output of the convolutional layer.
-4. **Fully Connected Layers**: To map the aggregated features to the desired output size, typically ending with a classification or regression layer.
 
-The complexity of the model should align with the complexity of your task and the amount of available data to prevent overfitting.
+Other option:
+1. **Pooling Layer**: (Alternative) To downsample the output of the convolutional layer.
 
 # Implementation
 To use the `data` object (considering data as the object where the file .pkl is extracted) for temporal aggregation in PyTorch:
 
 1. **Extract Features**: Loop through your `data['features']` list and stack the `'features_RGB'` numpy arrays into a PyTorch tensor. Ensure the tensor shape aligns with what `nn.Conv1d` expects.
 
-2. **Create Dataset and DataLoader**: Wrap your tensor in a custom Dataset class and use a DataLoader for batching.
+2. **Create Dataset**: Wrap your tensor in a custom Dataset class.
 
-3. **Define Model**: Create a PyTorch model with layers like `nn.Conv1d`, activation functions, (optional) pooling layers, and fully connected layers.
-
-4. **Training**: Train the model using the DataLoader, by feeding batches of data into your model and updating the model's weights based on the loss between the output and your ground truth.
-
-Draft code:
-```python        
-class TemporalModel(nn.Module):
-    def __init__(self):
-        super(TemporalModel, self).__init__()
-        self.conv1d = nn.Conv1d(...) # define your layers
-        # add more layers if needed
-        
-    def forward(self, x):
-        x = self.conv1d(x)
-        # pass through more layers
-        return x
-
-
-def aggregate_features():
-    # Assuming these steps already done:
-    # Step 1: load data
-    # Step 2: create dataset and dataloader
-
-    # Model
-    model = TemporalModel()
-
-    # Training loop
-    for epoch in range(num_epochs):
-        for batch in dataloader:
-            output = model(batch)
-            # compute loss, backpropagate, update model weights
-```
+3. **Define Model**: Create a PyTorch model with layers like `nn.Conv1d`, activation functions, (optional) pooling layers.
 
 Note: adjust parameters, shapes, and layers according to your specific requirements and the structure of your data.
