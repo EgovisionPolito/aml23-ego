@@ -1,6 +1,15 @@
 import pickle
 
 
+def get_data_from_pkl(pkl_file):
+    # Open the .pkl file in binary mode for reading
+    with open(f"{pkl_file}.pkl", "rb") as pkl_file:
+        # Load the data from the .pkl file
+        data = pickle.load(pkl_file)
+
+    return data
+
+
 def extract_pkl(pkl_folder):
     """Example of pkl_folder:
     pkl_folder = [

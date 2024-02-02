@@ -1,5 +1,6 @@
 .DS_Store
-saved_features/*
 */__pycache__/*
+saved_features/*
+aggregated_features/*
 Experiment_logs
 saved_models

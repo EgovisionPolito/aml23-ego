@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class TemporalModel(nn.Module):
@@ -9,6 +10,7 @@ class TemporalModel(nn.Module):
         output_classes,
         conv1d_channels,
         fc_hidden_units,
+        sequence_length,
         use_maxpool=True,
     ):
         super(TemporalModel, self).__init__()
@@ -29,9 +31,10 @@ class TemporalModel(nn.Module):
         self.use_maxpool = use_maxpool
         if self.use_maxpool:
             self.maxpool = nn.MaxPool1d(kernel_size=2, stride=2)
+            sequence_length //= 2
 
         # Fully connected layers
-        self.fc1 = nn.Linear(conv1d_channels, fc_hidden_units)
+        self.fc1 = nn.Linear(conv1d_channels * sequence_length, fc_hidden_units)
         self.fc2 = nn.Linear(fc_hidden_units, output_classes)
 
     def forward(self, x):
