@@ -96,6 +96,7 @@ def save_feat(model, loader, device, it, num_classes):
 
             for m in modalities:
                 batch, _, height, width = data[m].shape
+                # logger.info(f"Data shape: {data[m].shape}") # ToDo: check the shape of the data (in particular the batch size)
                 data[m] = data[m].reshape(batch, args.save.num_clips,
                                           args.save.num_frames_per_clip[m], -1, height, width)
                 data[m] = data[m].permute(1, 0, 3, 2, 4, 5)
@@ -109,13 +110,16 @@ def save_feat(model, loader, device, it, num_classes):
                 for m in modalities:
                     clip[m] = data[m][i_c].to(device)
 
-                output, feat = model(clip)
+                output, feat = model(clip) # forward #ToDo: check what does 'logits' mean
                 feat = feat["features"]
                 for m in modalities:
                     logits[m][i_c] = output[m]
                     features[m][i_c] = feat[m]
+
+            # logger.info(f"Features shape: {features["RGB"].shape}") # ToDo: check the shape of the features
             for m in modalities:
                 logits[m] = torch.mean(logits[m], dim=0)
+                
             for i in range(batch):
                 sample = {"uid": int(uid[i].cpu().detach().numpy()), "video_name": video_name[i]}
                 for m in modalities:
@@ -129,6 +133,7 @@ def save_feat(model, loader, device, it, num_classes):
                 logger.info("[{}/{}] top1= {:.3f}% top5 = {:.3f}%".format(i_val + 1, len(loader),
                                                                           model.accuracy.avg[1], model.accuracy.avg[5]))
 
+        # Kmeans(resulct_dict["features"])
         os.makedirs("saved_features", exist_ok=True)
         pickle.dump(results_dict, open(os.path.join("saved_features", args.name + "_" +
                                                     args.dataset.shift.split("-")[1] + "_" +
