@@ -30,7 +30,7 @@ class LSTM(nn.Module):
         # output = self.fc(lstm_out[:, -1, :])  # Assuming you want to use the output from the last time step
         # features = {'lstm_out': lstm_out}  # Modify this to include any other intermediate features
         # return output, features
-        return self.lstm(x), {}
+        return self.lstm(reshaped_x), {}
     
         '''
         Parameters
