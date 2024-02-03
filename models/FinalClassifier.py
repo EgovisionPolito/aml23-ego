@@ -50,10 +50,10 @@ class LSTM(nn.Module):
         c0 = torch.zeros(self.num_layers, reshaped_x.size(0), self.hidden_size).to(x.device)
 
         # Forward pass through LSTM
-        out, _ = self.lstm(reshaped_x, (h0, c0))
+        out, hn = self.lstm(reshaped_x, (h0, c0))
         logger.info(f"out_shape: {out.shape}")
 
-        return out, {}
+        return out, hn
     
         '''
         Parameters

@@ -29,7 +29,7 @@ test:
 dataset:
   annotations_path: train_val # path for the annotations data
   shift: ??? # shifts of the dataset
-  workers: 4 # number of workers for the dataloader
+  workers: 2 # number of workers for the dataloader
   stride: 2 # stride in case of dense sampling
   resolution: 224 # input resolution to the model
   RGB:
