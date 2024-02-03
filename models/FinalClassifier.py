@@ -31,13 +31,13 @@ class LSTM(nn.Module):
         # logger.info(f"x parameter: {x}")
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
         c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
-        logger.info(f"INITIAL - x: {x}, x_length: {len(x)}, x_shape: {x.shape()}, h0: {h0.shape()}, c0: {c0.shape()}")
+        logger.info(f"INITIAL - x: {x}, x_length: {len(x)}, x_shape: {x.shape}, h0: {h0.shape}, c0: {c0.shape}")
 
         x = x.unsqueeze(0)
-        logger.info(f"UNSQUEEZE - x: {x}, x_length: {len(x)}, x_shape: {x.shape()}, h0: {h0.shape()}, c0: {c0.shape()}")
+        logger.info(f"UNSQUEEZE - x: {x}, x_length: {len(x)}, x_shape: {x.shape}, h0: {h0.shape}, c0: {c0.shape}")
 
         x = x.transpose(1, 2)
-        logger.info(f"TRANSPOSE - x: {x}, x_length: {len(x)}, x_shape: {x.shape()}, h0: {h0.shape()}, c0: {c0.shape()}")
+        logger.info(f"TRANSPOSE - x: {x}, x_length: {len(x)}, x_shape: {x.shape}, h0: {h0.shape}, c0: {c0.shape}")
 
         out, _ = self.lstm(x, (h0, c0))
         # out = out[:, -1, :]
