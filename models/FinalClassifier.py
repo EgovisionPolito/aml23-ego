@@ -29,28 +29,28 @@ class LSTM(nn.Module):
 
     def forward(self, x):
         #* we want x shape equal to (batch_size, sequence_length, input_size)
-        reshaped_x = x.reshape((1, 1, 32))
-        # x.reshape((self.batch_size, self.sequence_length, self.input_size))
-        logger.info(f"x: {reshaped_x}, x_shape: {reshaped_x.shape}")
-        h0 = torch.zeros(self.num_layers, reshaped_x.size(0), self.hidden_size).to(device)
-        c0 = torch.zeros(self.num_layers, reshaped_x.size(0), self.hidden_size).to(device)
-        # logger.info(f"INITIAL - x: {x}, x_length: {len(x)}, x_shape: {x.shape}, h0: {h0.shape}, c0: {c0.shape}")
+        # reshaped_x = x.reshape((1, 1, 32))
+        # # x.reshape((self.batch_size, self.sequence_length, self.input_size))
+        # logger.info(f"x: {reshaped_x}, x_shape: {reshaped_x.shape}")
+        # h0 = torch.zeros(self.num_layers, reshaped_x.size(0), self.hidden_size).to(device)
+        # c0 = torch.zeros(self.num_layers, reshaped_x.size(0), self.hidden_size).to(device)
+        # out, _ = self.lstm(reshaped_x, (h0, c0))
+        # logger.info(f"OUT: {out}, OUT_SHAPE: {out.shape}")
+                # Check the shape of x
+        logger.info(f"x_shape: {x.shape}")
 
-        # x = x.unsqueeze(0)
-        # logger.info(f"UNSQUEEZE - x: {x}, x_length: {len(x)}, x_shape: {x.shape}, h0: {h0.shape}, c0: {c0.shape}")
+        # Assuming x has shape (32), reshape it for LSTM
+        reshaped_x = x.view(self.batch_size, 1, self.input_size)
+        logger.info(f"reshaped_x_shape: {reshaped_x.shape}")
 
-        # x = x.transpose(1, 2)
-        # logger.info(f"TRANSPOSE - x: {x}, x_length: {len(x)}, x_shape: {x.shape}, h0: {h0.shape}, c0: {c0.shape}")
+        # Initialize hidden and cell states with the proper batch size
+        h0 = torch.zeros(self.num_layers, reshaped_x.size(0), self.hidden_size).to(x.device)
+        c0 = torch.zeros(self.num_layers, reshaped_x.size(0), self.hidden_size).to(x.device)
 
+        # Forward pass through LSTM
         out, _ = self.lstm(reshaped_x, (h0, c0))
-        logger.info(f"OUT: {out}, OUT_SHAPE: {out.shape}")
+        logger.info(f"out_shape: {out.shape}")
 
-        # out = out[:, -1, :]
-        # reshaped_x = x.reshape(self.batch_size, self.sequence_length, -1)
-        # lstm_out, _ = self.lstm(x)
-        # output = self.fc(lstm_out[:, -1, :])  # Assuming you want to use the output from the last time step
-        # features = {'lstm_out': lstm_out}  # Modify this to include any other intermediate features
-        # return output, features
         return out, {}
     
         '''
