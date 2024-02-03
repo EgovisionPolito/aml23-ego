@@ -25,14 +25,16 @@ class LSTM(nn.Module):
 
     def forward(self, x):
         logger.info(f"x parameter: {x}")
-        reshaped_x = x.reshape(-1, self.sequence_length, self.input_size)
+        h0 = nn.zeros(self.num_layers, x.size(0), self.hidden_size)
+        out = self.lstm(x, h0)
+        out = out[:, -1, :]
         # reshaped_x = x.reshape(self.batch_size, self.sequence_length, -1)
-        logger.info(f"x parameter: {x}, length: {len(x)}, reshaped_x: {reshaped_x}")
+        logger.info(f"x parameter: {x}, length: {len(x)}, reshaped_x: {out}")
         # lstm_out, _ = self.lstm(x)
         # output = self.fc(lstm_out[:, -1, :])  # Assuming you want to use the output from the last time step
         # features = {'lstm_out': lstm_out}  # Modify this to include any other intermediate features
         # return output, features
-        return self.lstm(reshaped_x), {}
+        return out, {}
     
         '''
         Parameters
