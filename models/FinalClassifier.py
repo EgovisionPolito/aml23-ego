@@ -43,6 +43,8 @@ class LSTM(nn.Module):
         # logger.info(f"TRANSPOSE - x: {x}, x_length: {len(x)}, x_shape: {x.shape}, h0: {h0.shape}, c0: {c0.shape}")
 
         out, _ = self.lstm(reshaped_x, (h0, c0))
+        logger.info(f"OUT: {out}, OUT_SHAPE: {out.shape}")
+
         # out = out[:, -1, :]
         # reshaped_x = x.reshape(self.batch_size, self.sequence_length, -1)
         # lstm_out, _ = self.lstm(x)
