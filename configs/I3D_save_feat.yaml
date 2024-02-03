@@ -8,12 +8,12 @@ save:
   dense_sampling:
     RGB: True
   num_frames_per_clip:
-    RGB: 25   # 5, 10, 25
+    RGB: 5   # 5, 10, 25
 
 dataset:
   annotations_path: train_val
   shift: ???
-  workers: 4 #4
+  workers: 2 #4
   stride: 2
   resolution: 224
   RGB:
