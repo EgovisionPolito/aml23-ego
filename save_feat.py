@@ -12,6 +12,9 @@ import os
 import models as model_list
 import tasks
 
+from utils.temporal_aggregation import aggregate_features
+
+
 # global variables among training functions
 modalities = None
 np.random.seed(13696641)
@@ -96,6 +99,7 @@ def save_feat(model, loader, device, it, num_classes):
 
             for m in modalities:
                 batch, _, height, width = data[m].shape
+                # logger.info(f"Data shape: {data[m].shape}") # -> torch.Size([1, 75, 224, 224])
                 data[m] = data[m].reshape(batch, args.save.num_clips,
                                           args.save.num_frames_per_clip[m], -1, height, width)
                 data[m] = data[m].permute(1, 0, 3, 2, 4, 5)
@@ -109,13 +113,16 @@ def save_feat(model, loader, device, it, num_classes):
                 for m in modalities:
                     clip[m] = data[m][i_c].to(device)
 
-                output, feat = model(clip)
+                output, feat = model(clip) # forward
                 feat = feat["features"]
                 for m in modalities:
                     logits[m][i_c] = output[m]
                     features[m][i_c] = feat[m]
+
+            # logger.info(f"Features shape: {np.array(features['RGB'].cpu()).shape}") # -> (5, 1, 1024)
             for m in modalities:
                 logits[m] = torch.mean(logits[m], dim=0)
+                
             for i in range(batch):
                 sample = {"uid": int(uid[i].cpu().detach().numpy()), "video_name": video_name[i]}
                 for m in modalities:
@@ -133,6 +140,9 @@ def save_feat(model, loader, device, it, num_classes):
         pickle.dump(results_dict, open(os.path.join("saved_features", args.name + "_" +
                                                     args.dataset.shift.split("-")[1] + "_" +
                                                     args.split + ".pkl"), 'wb'))
+        
+        os.makedirs("aggregated_features", exist_ok=True)
+        aggregate_features() # Temporary aggregation of features
 
         class_accuracies = [(x / y) * 100 for x, y in zip(model.accuracy.correct, model.accuracy.total)]
         logger.info('Final accuracy: top1 = %.2f%%\ttop5 = %.2f%%' % (model.accuracy.avg[1],
