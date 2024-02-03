@@ -19,7 +19,7 @@ class LSTM(nn.Module):
         self.input_size = 1024
         self.hidden_size = 128
         self.num_layers = 1
-        self.lstm = nn.LSTM(self.input_size, self.hidden_size, num_classes, self.num_layers, batch_first=True)
+        self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.num_layers, batch_first=True)
         self.fc = nn.Linear(self.hidden_size, num_classes)
 
     def forward(self, x):
