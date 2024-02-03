@@ -14,6 +14,22 @@ class Classifier(nn.Module):
 
 class LSTM(nn.Module):
     def __init__(self, num_classes):
+
+        super().__init__()
+        self.input_size = 1024
+        self.hidden_size = 128
+        self.num_layers = 1
+        self.lstm = nn.LSTM(self.input_size, self.hidden_size, num_classes, self.num_layers, batch_first=True)
+        self.fc = nn.Linear(self.hidden_size, num_classes)
+
+    def forward(self, x):
+        logger.info(f"x parameter: {x}")
+        lstm_out, _ = self.lstm(x)
+        output = self.fc(lstm_out[:, -1, :])  # Assuming you want to use the output from the last time step
+        features = {'lstm_out': lstm_out}  # Modify this to include any other intermediate features
+        return output, features
+        # return self.lstm(x), {}
+    
         '''
         Parameters
             input_size - The number of expected features in the input x
@@ -32,15 +48,4 @@ class LSTM(nn.Module):
 
             proj_size - If > 0, will use LSTM with projections of corresponding size. Default: 0
         '''
-        super().__init__()
-        self.input_size = 1024
-        self.hidden_size = 128
-        self.num_layers = 1
-        self.lstm = nn.LSTM(self.input_size, self.hidden_size, num_classes, self.num_layers, batch_first=True)
-
-    def forward(self, x):
-        logger.info(f"x parameter: {x}")
-        return self.lstm(x), {}
-    
-
 
