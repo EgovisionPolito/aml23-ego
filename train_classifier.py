@@ -138,7 +138,7 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
             data_loader_source = iter(train_loader)
             source_data, source_label = next(data_loader_source)
         end_t = datetime.now()
-        logger.info(f"##### TEST ##### - DATA_LOADER_SOURCE: {data_loader_source} | LEN: {len(data_loader_source)} | SOURCE_DATA: {source_data['RGB']} | LEN: {source_data['RGB'].shape} | SOURCE_LABEL: {source_label} | LEN: {len(source_label)}")
+        #*logger.info(f"##### TEST ##### - SOURCE_DATA: {source_data['RGB']} | LEN: {source_data['RGB'].shape} | SOURCE_LABEL: {source_label} | LEN: {len(source_label)}")
 
         logger.info(f"Iteration {i}/{training_iterations} batch retrieved! Elapsed time = "
                     f"{(end_t - start_t).total_seconds() // 60} m {(end_t - start_t).total_seconds() % 60} s")
@@ -150,7 +150,10 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
         for clip in range(args.train.num_clips):
             # in case of multi-clip training one clip per time is processed
             for m in modalities:
+                logger.info(f"##### BEFORE ##### - SOURCE_DATA: {source_data['RGB']} | LEN: {source_data['RGB'].shape}")
+
                 data[m] = source_data[m][:, clip].to(device)
+                logger.info(f"##### AFTER ##### - DATA: {data['RGB']} | LEN: {data['RGB'].shape}")
 
             logits, _ = action_classifier.forward(data)
             action_classifier.compute_loss(logits, source_label, loss_weight=1)
