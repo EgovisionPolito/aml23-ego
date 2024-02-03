@@ -34,7 +34,7 @@ class PklDataset(Dataset):
 
 
 def aggregate_features():
-    extracted_features_path = "/content/aml23-ego/saved_features"
+    extracted_features_path = "saved_features"
 
     # get list of files in the folder of extracted features (filtering out non .pkl files)
     input_pkl_folder = list(
@@ -55,21 +55,21 @@ def aggregate_features():
             mode="avg",
         )
 
-        aggregated_features = {"features": []}
         temp_features = []
-        for _, _, features in pkl_dataset:
+        for uid, _, features in pkl_dataset:
 
             # Forward pass
             outputs = model(features)
 
             # ? cpu() -> move data from GPU to CPU, necessary for numpy conversion
-            temp_features.append(outputs.detach().cpu().numpy())
+            temp_features.append(
+                {"uid": uid, "features_RGB": (outputs.detach().cpu().numpy())[0]}
+            )
 
-        temp_features = np.concatenate(temp_features, axis=0)
-        aggregated_features["features"].append(temp_features)
+        aggregated_features = {"features": temp_features}
 
         try:
-            with open(f"/content/aml23-ego/aggregated_features/aggregated_{file}", "wb") as f:
+            with open(f"{extracted_features_path}/aggregated_{file}", "wb") as f:
                 pickle.dump(aggregated_features, f)
             logger.info("Aggregation: OK")
         except Exception as e:
