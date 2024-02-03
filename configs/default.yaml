@@ -17,14 +17,14 @@ train:
   dense_sampling: # sampling version adopted in training for each modality
     RGB: True
   num_frames_per_clip: # number of frames adopted in training for each modality
-    RGB: 16
+    RGB: 25
 
 test:
   num_clips: 5 # number of clips in testing
   dense_sampling: # sampling version adopted in test for each modality
     RGB: True
   num_frames_per_clip: # number of frames adopted in test for each modality
-    RGB: 16
+    RGB: 25
 
 dataset:
   annotations_path: train_val # path for the annotations data
