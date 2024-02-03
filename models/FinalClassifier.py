@@ -28,7 +28,7 @@ class LSTM(nn.Module):
         # self.fc = nn.Linear(self.hidden_size, num_classes)
 
     def forward(self, x):
-        # logger.info(f"x parameter: {x}")
+        logger.info(f"x parameter: {x}, x_shape: {x.shape}")
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
         c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
         logger.info(f"INITIAL - x: {x}, x_length: {len(x)}, x_shape: {x.shape}, h0: {h0.shape}, c0: {c0.shape}")
