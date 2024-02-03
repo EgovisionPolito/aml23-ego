@@ -19,8 +19,8 @@ class Classifier(nn.Module):
 class LSTM(nn.Module):
     def __init__(self, num_classes=8):
         super(LSTM, self).__init__()
-        self.input_size = 1024
-        self.hidden_size = 128
+        self.input_size = 32
+        self.hidden_size = 32
         self.num_layers = 1
         self.sequence_length = 1024
         self.batch_size = 32 # da prendere nello yaml
