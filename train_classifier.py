@@ -150,7 +150,7 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
         for clip in range(args.train.num_clips):
             # in case of multi-clip training one clip per time is processed
             for m in modalities:
-                #* source_data[m] è (32, 1024) mentre data[m] è 32, la prima colonna
+                #* source_data[m] è (32, 1024) mentre data[m] è 32, la prima colonna xké clip=1 nello yaml
                 data[m] = source_data[m][:, clip].to(device) 
                 #*logger.info(f"##### DEBUG ##### - SOURCE_DATA: {source_data['RGB']} | SHAPE: {source_data['RGB'].shape} | DATA: {data['RGB']} | SHAPE: {data['RGB'].shape}")
 
