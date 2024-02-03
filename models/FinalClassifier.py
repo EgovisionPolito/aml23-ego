@@ -42,7 +42,7 @@ class LSTM(nn.Module):
         logger.info(f"x_shape: {x.shape}")
 
         # Assuming x has shape (32), reshape it for LSTM
-        reshaped_x = x.view(self.batch_size, 32, self.input_size)
+        reshaped_x = x.view(self.batch_size, 1, self.input_size)
         logger.info(f"reshaped_x_shape: {reshaped_x.shape}")
 
         # Initialize hidden and cell states with the proper batch size
