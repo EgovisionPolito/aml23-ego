@@ -19,10 +19,12 @@ class Classifier(nn.Module):
 class LSTM(nn.Module):
     def __init__(self, num_classes=8):
         super(LSTM, self).__init__()
-        self.input_size = 32
+        # self.input_size = 32
+        self.input_size = 1
         self.hidden_size = 32
         self.num_layers = 1
-        self.sequence_length = 1024 # quanti x gli passo, credo 1024 (cioè le colonne)
+        self.sequence_length = 32 # quanti x gli passo, credo 1024 (cioè le colonne)
+        # self.sequence_length = 1024 # quanti x gli passo, credo 1024 (cioè le colonne)
         self.batch_size = 32 # da prendere nello yaml
         self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.num_layers, batch_first=True)
         # self.fc = nn.Linear(self.hidden_size, num_classes)
@@ -40,7 +42,7 @@ class LSTM(nn.Module):
         logger.info(f"x_shape: {x.shape}")
 
         # Assuming x has shape (32), reshape it for LSTM
-        reshaped_x = x.view(self.batch_size, 1, self.input_size)
+        reshaped_x = x.view(self.batch_size, 32, self.input_size)
         logger.info(f"reshaped_x_shape: {reshaped_x.shape}")
 
         # Initialize hidden and cell states with the proper batch size
