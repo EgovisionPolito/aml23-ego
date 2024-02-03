@@ -138,6 +138,7 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
             data_loader_source = iter(train_loader)
             source_data, source_label = next(data_loader_source)
         end_t = datetime.now()
+        logger.info(f"##### TEST ##### - DATA_LOADER_SOURCE: {data_loader_source} | SOURCE_DATA: {source_data} | SOURCE_LABEL: {source_label}")
 
         logger.info(f"Iteration {i}/{training_iterations} batch retrieved! Elapsed time = "
                     f"{(end_t - start_t).total_seconds() // 60} m {(end_t - start_t).total_seconds() % 60} s")
