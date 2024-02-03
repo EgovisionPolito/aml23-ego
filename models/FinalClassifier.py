@@ -1,5 +1,9 @@
+import torch
 from torch import nn
 from utils.logger import logger
+
+# Device configuration
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class Classifier(nn.Module):
     def __init__(self, num_classes):
@@ -25,7 +29,7 @@ class LSTM(nn.Module):
 
     def forward(self, x):
         logger.info(f"x parameter: {x}")
-        h0 = nn.zeros(self.num_layers, x.size(0), self.hidden_size)
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
         out = self.lstm(x, h0)
         out = out[:, -1, :]
         # reshaped_x = x.reshape(self.batch_size, self.sequence_length, -1)
