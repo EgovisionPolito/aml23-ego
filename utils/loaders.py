@@ -76,7 +76,38 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-        raise NotImplementedError("You should implement _get_train_indices")
+        #* JUST AS A TEST I USE THE SAME CODE OF _get_val_indices
+        record_num_frames = record.num_frames[modality]
+        num_frames_per_clip = self.num_frames_per_clip[modality]
+        desired_num_frames = num_frames_per_clip * self.num_clips
+        sampled_frames_inidices_list = []
+
+
+        ##* DENSE Sampling
+        clip_radius = (num_frames_per_clip // 2)
+        for clip_number in range(self.num_clips):
+                clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
+                clip_frames_inidices_list = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius+1))
+                #*Se volessimo una lista di array numpy dove ogni array ha i frame di una clip
+                #clip_frames_indices_list = np.arange(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval)
+                #sampled_frames_inidices_list.append(clip_frames_indices_list)
+                #*Caso di una lista piatta con solo indici
+                sampled_frames_inidices_list.extend(clip_frames_inidices_list[:num_frames_per_clip])
+
+        if(len(sampled_frames_inidices_list) < desired_num_frames):
+            #DEBUG  
+            # logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+            raise SystemError(f"For the record {record.untrimmed_video_name} {record.uid}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is less than the desired {desired_num_frames} frames!")
+        elif(len(sampled_frames_inidices_list) > desired_num_frames):
+            #DEBUG  
+            # logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+            raise SystemError(f"For the record {record.untrimmed_video_name} {record.uid}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is more than the desired {desired_num_frames} frames!")
+        else:
+            #DEBUG
+            #logger.info(f"{record.untrimmed_video_name} {record.uid} - record_num_frames: {record_num_frames}, sampled_frames_inidices_list: {sampled_frames_inidices_list}")
+            return sampled_frames_inidices_list
+
+        # raise NotImplementedError("You should implement _get_train_indices")
 
     def _get_val_indices(self, record, modality):
         ##################################################################
@@ -87,15 +118,13 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-        
-        DENSE = True
 
         record_num_frames = record.num_frames[modality]
         num_frames_per_clip = self.num_frames_per_clip[modality]
         desired_num_frames = num_frames_per_clip * self.num_clips
         sampled_frames_inidices_list = []
 
-        if DENSE:
+        if self.dense_sampling[modality]:
             ##* DENSE Sampling
             clip_radius = (num_frames_per_clip // 2)
             for clip_number in range(self.num_clips):

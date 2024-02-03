@@ -53,13 +53,13 @@ def main():
     models = {}
     logger.info("Instantiating models per modality")
     for m in modalities:
-        logger.info('{} Net\tModality: {}'.format(args.models[m].model, m))
+        logger.info('{} Net\tModality: {}'.format(args.models[m].model, m)) #* args.models[m].model è uguale a Classifier
         # notice that here, the first parameter passed is the input dimension
         # In our case it represents the feature dimensionality which is equivalent to 1024 for I3D
-        models[m] = getattr(model_list, args.models[m].model)()
+        models[m] = getattr(model_list, args.models[m].model)() # abbiamo il Classfier in FinalClassifier.py
 
     # the models are wrapped into the ActionRecognition task which manages all the training steps
-    action_classifier = tasks.ActionRecognition("action-classifier", models, args.batch_size,
+    action_classifier = tasks.ActionRecognition("action-classifier", models, args.batch_size,      #* Inizializza il modello passando alcuni parametri nel default.yaml
                                                 args.total_batch, args.models_dir, num_classes,
                                                 args.train.num_clips, args.models, args=args)
     action_classifier.load_on_gpu(device)
@@ -73,13 +73,13 @@ def main():
         # notice, here it is multiplied by tot_batch/batch_size since gradient accumulation technique is adopted
         training_iterations = args.train.num_iter * (args.total_batch // args.batch_size)
         # all dataloaders are generated here
-        train_loader = torch.utils.data.DataLoader(EpicKitchensDataset(args.dataset.shift.split("-")[0], modalities,
+        train_loader = torch.utils.data.DataLoader(EpicKitchensDataset(args.dataset.shift.split("-")[0], modalities, #* prende aggregated_feat_train.pkl
                                                                        'train', args.dataset, None, None, None,
                                                                        None, load_feat=True),
                                                    batch_size=args.batch_size, shuffle=True,
                                                    num_workers=args.dataset.workers, pin_memory=True, drop_last=True)
 
-        val_loader = torch.utils.data.DataLoader(EpicKitchensDataset(args.dataset.shift.split("-")[-1], modalities,
+        val_loader = torch.utils.data.DataLoader(EpicKitchensDataset(args.dataset.shift.split("-")[-1], modalities,  #* prende aggregated_feat_test.pkl
                                                                      'val', args.dataset, None, None, None,
                                                                      None, load_feat=True),
                                                  batch_size=args.batch_size, shuffle=False,
@@ -109,7 +109,7 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
     """
     global training_iterations, modalities
 
-    data_loader_source = iter(train_loader)
+    data_loader_source = iter(train_loader) #* analogo all'enumerate, chiama _get_item che chiama _get_train_indices
     action_classifier.train(True)
     action_classifier.zero_grad()
     iteration = action_classifier.current_iter * (args.total_batch // args.batch_size)
@@ -133,7 +133,7 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
         # the following code is necessary as we do not reason in epochs so as soon as the dataloader is finished we need
         # to redefine the iterator
         try:
-            source_data, source_label = next(data_loader_source)
+            source_data, source_label = next(data_loader_source) #* ? divide i dati dalle labels
         except StopIteration:
             data_loader_source = iter(train_loader)
             source_data, source_label = next(data_loader_source)
