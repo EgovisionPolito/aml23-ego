@@ -27,13 +27,14 @@ class PklDataset(Dataset):
 
         # ToDo: handle of different features (instead of RGB) is missing
         uid = sample["uid"]
+        video_name = sample["video_name"]
         features = torch.tensor(sample["features_RGB"], dtype=torch.float32)
 
-        return uid, features
+        return uid, video_name, features
 
 
 def aggregate_features():
-    extracted_features_path =  "/content/aml23-ego/saved_features"
+    extracted_features_path = "saved_features"
 
     # get list of files in the folder of extracted features (filtering out non .pkl files)
     input_pkl_folder = list(
@@ -55,7 +56,7 @@ def aggregate_features():
         )
 
         temp_features = []
-        for uid, features in pkl_dataset:
+        for uid, _, features in pkl_dataset:
 
             # Forward pass
             outputs = model(features)
