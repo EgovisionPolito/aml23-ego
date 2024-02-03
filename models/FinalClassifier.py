@@ -18,11 +18,14 @@ class LSTM(nn.Module):
         self.input_size = 1024
         self.hidden_size = 128
         self.num_layers = 1
+        self.sequence_length = 1024
+        self.batch_size = 32 # da prendere nello yaml
         self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.num_layers, batch_first=True)
         # self.fc = nn.Linear(self.hidden_size, num_classes)
 
     def forward(self, x):
         logger.info(f"x parameter: {x}")
+        reshaped_x = x.reshape(self.batch_size, self.sequence_length, -1)
         # lstm_out, _ = self.lstm(x)
         # output = self.fc(lstm_out[:, -1, :])  # Assuming you want to use the output from the last time step
         # features = {'lstm_out': lstm_out}  # Modify this to include any other intermediate features
