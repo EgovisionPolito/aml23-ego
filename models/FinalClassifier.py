@@ -32,8 +32,9 @@ class LSTM(nn.Module):
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
         c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
         x = x.unsqueeze(0)
+        x = x.transpose(1, 2)
         out, _ = self.lstm(x, (h0, c0))
-        out = out[:, -1, :]
+        # out = out[:, -1, :]
         # reshaped_x = x.reshape(self.batch_size, self.sequence_length, -1)
         logger.info(f"x parameter: {x}, length: {len(x)}, reshaped_x: {out}")
         # lstm_out, _ = self.lstm(x)
