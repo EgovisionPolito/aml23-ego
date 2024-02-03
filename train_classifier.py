@@ -56,10 +56,10 @@ def main():
         logger.info('{} Net\tModality: {}'.format(args.models[m].model, m)) #* args.models[m].model è uguale a Classifier
         # notice that here, the first parameter passed is the input dimension
         # In our case it represents the feature dimensionality which is equivalent to 1024 for I3D
-        models[m] = getattr(model_list, args.models[m].model)() # abbiamo il Classfier in FinalClassifier.py
+        models[m] = getattr(model_list, args.models[m].model)() #* istanzio il Classfier in FinalClassifier.py
 
     # the models are wrapped into the ActionRecognition task which manages all the training steps
-    action_classifier = tasks.ActionRecognition("action-classifier", models, args.batch_size,      #* Inizializza il modello passando alcuni parametri nel default.yaml
+    action_classifier = tasks.ActionRecognition("action-classifier", models, args.batch_size,      #* Passa alcuni parametri del default.yaml
                                                 args.total_batch, args.models_dir, num_classes,
                                                 args.train.num_clips, args.models, args=args)
     action_classifier.load_on_gpu(device)
