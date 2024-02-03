@@ -14,8 +14,7 @@ class Classifier(nn.Module):
 
 class LSTM(nn.Module):
     def __init__(self, num_classes):
-
-        super().__init__()
+        super(LSTM, self).__init__()
         self.input_size = 1024
         self.hidden_size = 128
         self.num_layers = 1
