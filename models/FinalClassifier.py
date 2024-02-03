@@ -29,7 +29,7 @@ class LSTM(nn.Module):
 
     def forward(self, x):
         #* we want x shape equal to (batch_size, sequence_length, input_size)
-        reshaped_x = x.reshape((self.batch_size, 1, 32))
+        reshaped_x = x.reshape((1, 1, 32))
         # x.reshape((self.batch_size, self.sequence_length, self.input_size))
         logger.info(f"x: {reshaped_x}, x_shape: {reshaped_x.shape}")
         h0 = torch.zeros(self.num_layers, reshaped_x.size(0), self.hidden_size).to(device)
