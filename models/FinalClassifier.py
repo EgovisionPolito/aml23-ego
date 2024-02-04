@@ -17,7 +17,7 @@ class Classifier(nn.Module):
     
 
 class LSTM(nn.Module):
-  def __init__(self, num_classes=8):
+  def __init__(self, num_classes=8): #* aggiusta i parametri, ad es. passa la batch come arg
       super(LSTM, self).__init__()
       self.input_size = 1024
       self.hidden_size = 32
@@ -28,16 +28,20 @@ class LSTM(nn.Module):
       # self.fc = nn.Linear(self.hidden_size, num_classes)
 
   def forward(self, x):
-      #* we want x shape equal to (batch_size, sequence_length, input_size)
-      logger.info(f"x_shape: {x}")
-      x = x.unsqueeze(1)
-      #x.reshape(self.batch_size, 1, self.input_size)
       # Initialize hidden and cell states with the proper batch size
+      # h0 and c0 shape = (D*num_layers, N, hidden_size)=(1, 32, 32)
       h0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(x.device)
       c0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(x.device)
+      # aggiungo una dimensione 
+      # we want x shape equal to (batch_size, sequence_length, input_size)=(32, 1, 1024)
+      # prima: x.shape = (32, 1024)
+      x = x.unsqueeze(1)
+      # dopo: x.shape = (32, 1, 1024)
 
       # Forward pass through LSTM
       out, (hn, cn) = self.lstm(x, (h0, c0))
+      # out: 
+      #
       logger.info(f"out_shape: {out}")  #logits: tipo le label, cioè le previsioni tipo
 
       #self.fc(out) -> forse per le logits

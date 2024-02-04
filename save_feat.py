@@ -142,7 +142,8 @@ def save_feat(model, loader, device, it, num_classes):
                                                     args.split + ".pkl"), 'wb'))
         
         os.makedirs("aggregated_features", exist_ok=True)
-        aggregate_features() # Temporary aggregation of features
+        if args.split == "train":
+            aggregate_features(args.split) # Temporary aggregation of features
 
         class_accuracies = [(x / y) * 100 for x, y in zip(model.accuracy.correct, model.accuracy.total)]
         logger.info('Final accuracy: top1 = %.2f%%\ttop5 = %.2f%%' % (model.accuracy.avg[1],
