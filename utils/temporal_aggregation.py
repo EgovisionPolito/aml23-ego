@@ -33,12 +33,16 @@ class PklDataset(Dataset):
         return uid, video_name, features
 
 
-def aggregate_features():
-    extracted_features_path = "saved_features"
+def aggregate_features(mode):
+    extracted_features_path = "/content/aml23-ego/saved_features"
 
     # get list of files in the folder of extracted features (filtering out non .pkl files)
     input_pkl_folder = list(
-        filter(lambda file: file.endswith(".pkl"), os.listdir(extracted_features_path))
+        filter(
+            lambda file: file.endswith(".pkl")
+            and mode in file,
+            os.listdir(extracted_features_path),
+        )
     )
 
     for file in input_pkl_folder:
@@ -56,20 +60,21 @@ def aggregate_features():
         )
 
         temp_features = []
-        for uid, _, features in pkl_dataset:
+        for uid, video_name, features in pkl_dataset:
 
             # Forward pass
             outputs = model(features)
 
             # ? cpu() -> move data from GPU to CPU, necessary for numpy conversion
             temp_features.append(
-                {"uid": uid, "features_RGB": (outputs.detach().cpu().numpy())[0]}
+                {"uid": uid, "video_name": video_name, "features_RGB": (outputs.detach().cpu().numpy())}
             )
 
         aggregated_features = {"features": temp_features}
 
         try:
-            with open(f"{extracted_features_path}/aggregated_{file}", "wb") as f:
+            os.remove(f"{extracted_features_path}/{file}")
+            with open(f"{extracted_features_path}/{file}", "wb") as f:
                 pickle.dump(aggregated_features, f)
             logger.info("Aggregation: OK")
         except Exception as e:

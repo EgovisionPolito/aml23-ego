@@ -196,7 +196,7 @@ class InceptionI3d(nn.Module):
                 x = self._modules[end_point](x)  # use _modules to work with dataparallel
 
         x = self.avg_pool(x)
-        feat = x.squeeze(-1).squeeze(-1).squeeze(-1)
+        feat = x.squeeze(-1).squeeze(-1).squeeze(-1)    #riduce di 3 dimensioni
         x = self.logits(self.dropout(x))
         logits = x.squeeze(3).squeeze(3).squeeze(2)
         return logits, {"features": feat}
