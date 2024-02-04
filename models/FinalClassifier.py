@@ -45,7 +45,7 @@ class LSTM(nn.Module):
         # hn: final hidden state for each element in sequence, stessa size di h0
         # cn: final cell state for each element in sequence, stessa di c0
         feat = hn[-1]
-        logger.info(f"hn: {hn}, hn[-1]=feat: {feat}, shape: {feat.shape}, logits: {logits}, shape: {logits.shape}")  #logits: tipo le label, cioè le previsioni tipo
         logits = self.fc(out) #-> forse per le logits
+        logger.info(f"hn: {hn}, hn[-1]=feat: {feat}, shape: {feat.shape}, logits: {logits}, shape: {logits.shape}")  #logits: tipo le label, cioè le previsioni tipo
 
         return logits, {"features": feat} #(1, 1024), (1, 8)
