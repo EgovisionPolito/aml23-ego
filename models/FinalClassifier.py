@@ -44,12 +44,21 @@ class LSTM(nn.Module):
         # out: contains the output features (batch_size, sequence_length, hidden_size)=(32, 1, 32)
         # hn: final hidden state for each element in sequence, stessa size di h0
         # cn: final cell state for each element in sequence, stessa di c0
-        last_output = out[:, -1, :]
-        logits = self.fc(last_output)
-        last_hn = out[:, -1, :]
-        feat = self.fc(last_hn)
-        #feat = hn[-1] #(32, 32)
-        #logits = self.fc(out) #(32, 8)
-        logger.info(f"hn: {hn}, hn[-1]=feat: {feat}, shape: {feat.shape}, logits: {logits}, shape: {logits.shape}")  #logits: tipo le label, cioè le previsioni tipo
 
-        return logits, {"features": feat} #(1, 1024), (batch_size, 1, 8)
+        # Reshape the output to be compatible with the fully connected layer
+        feat = out.view(-1, self.hidden_size)
+        # Pass through fully connected layer to get logits
+        logits = self.fc(feat)
+        logger.info(f"######## => l.shape: {logits.shape} | f.shape: {feat.shape} | logits: {logits} | feat: {feat}")
+        
+        return logits, {"features": feat} 
+    
+    
+    #(32, 8), (32, 1024)
+    # last_output = out[:, -1, :]
+    # logits = self.fc(last_output)
+    # last_hn = out[:, -1, :]
+    # feat = self.fc(last_hn)
+    # #feat = hn[-1] #(32, 32)
+    # #logits = self.fc(out) #(32, 8)
+    # logger.info(f"hn: {hn}, hn[-1]=feat: {feat}, shape: {feat.shape}, logits: {logits}, shape: {logits.shape}")  #logits: tipo le label, cioè le previsioni tipo
