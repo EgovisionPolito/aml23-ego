@@ -29,7 +29,7 @@ class LSTM(nn.Module):
 
   def forward(self, x):
       # Initialize hidden and cell states with the proper batch size
-      # h0 and c0 shape = (D*num_layers, N, hidden_size)=(1, 32, 32)
+      # h0 and c0 shape = (num_layers, batch_size, hidden_size)=(1, 32, 32)
       h0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(x.device)
       c0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(x.device)
       # aggiungo una dimensione 
@@ -40,8 +40,9 @@ class LSTM(nn.Module):
 
       # Forward pass through LSTM
       out, (hn, cn) = self.lstm(x, (h0, c0))
-      # out: 
-      #
+      # out: contains the output features (batch_size, sequence_length, hidden_size)=(32, 1, 32)
+      # hn: final hidden state for each element in sequence, stessa size di h0
+      # cn: final cell state for each element in sequence, stessa di c0
       logger.info(f"out_shape: {out}")  #logits: tipo le label, cioè le previsioni tipo
 
       #self.fc(out) -> forse per le logits
