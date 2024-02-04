@@ -17,34 +17,35 @@ class Classifier(nn.Module):
     
 
 class LSTM(nn.Module):
-  def __init__(self, num_classes=8): #* aggiusta i parametri, ad es. passa la batch come arg
-      super(LSTM, self).__init__()
-      self.input_size = 1024
-      self.hidden_size = 32
-      self.num_layers = 1
-      #self.sequence_length = 1 # quanti x gli passo, credo 1024 (cioè le colonne)
-      self.batch_size = 32 # da prendere nello yaml
-      self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.num_layers, batch_first=True)
-      # self.fc = nn.Linear(self.hidden_size, num_classes)
+    def __init__(self, num_classes=8): #* aggiusta i parametri, ad es. passa la batch come arg
+        super(LSTM, self).__init__()
+        self.input_size = 1024
+        self.hidden_size = 32
+        self.num_layers = 1
+        #self.sequence_length = 1 # quanti x gli passo, credo 1024 (cioè le colonne)
+        self.batch_size = 32 # da prendere nello yaml
+        self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.num_layers, batch_first=True)
+        self.fc = nn.Linear(self.hidden_size, num_classes)
 
-  def forward(self, x):
-      # Initialize hidden and cell states with the proper batch size
-      # h0 and c0 shape = (num_layers, batch_size, hidden_size)=(1, 32, 32)
-      h0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(x.device)
-      c0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(x.device)
-      # aggiungo una dimensione 
-      # we want x shape equal to (batch_size, sequence_length, input_size)=(32, 1, 1024)
-      # prima: x.shape = (32, 1024)
-      x = x.unsqueeze(1)
-      # dopo: x.shape = (32, 1, 1024)
+    def forward(self, x):
+        # Initialize hidden and cell states with the proper batch size
+        # h0 and c0 shape = (num_layers, batch_size, hidden_size)=(1, 32, 32)
+        h0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(x.device)
+        c0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(x.device)
 
-      # Forward pass through LSTM
-      out, (hn, cn) = self.lstm(x, (h0, c0))
-      # out: contains the output features (batch_size, sequence_length, hidden_size)=(32, 1, 32)
-      # hn: final hidden state for each element in sequence, stessa size di h0
-      # cn: final cell state for each element in sequence, stessa di c0
-      logger.info(f"out_shape: {out}")  #logits: tipo le label, cioè le previsioni tipo
+        # aggiungo una dimensione 
+        # we want x shape equal to (batch_size, sequence_length, input_size)=(32, 1, 1024)
+        # prima: x.shape = (32, 1024)
+        x = x.unsqueeze(1)
+        # dopo: x.shape = (32, 1, 1024)
 
-      #self.fc(out) -> forse per le logits
+        # Forward pass through LSTM
+        out, (hn, cn) = self.lstm(x, (h0, c0))
+        # out: contains the output features (batch_size, sequence_length, hidden_size)=(32, 1, 32)
+        # hn: final hidden state for each element in sequence, stessa size di h0
+        # cn: final cell state for each element in sequence, stessa di c0
+        feat = hn[-1]
+        logger.info(f"hn: {hn}, hn[-1]=feat: {feat}, shape: {feat.shape}, logits: {logits}, shape: {logits.shape}")  #logits: tipo le label, cioè le previsioni tipo
+        logits = self.fc(out) #-> forse per le logits
 
-      return logits, {"features": feat} 
+        return logits, {"features": feat} #(1, 1024), (1, 8)
