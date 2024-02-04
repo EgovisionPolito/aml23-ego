@@ -20,10 +20,10 @@ class LSTM(nn.Module):
     def __init__(self, num_classes=8):
         super(LSTM, self).__init__()
         # self.input_size = 32
-        self.input_size = 1
+        self.input_size = 1024
         self.hidden_size = 32
         self.num_layers = 1
-        self.sequence_length = 32 # quanti x gli passo, credo 1024 (cioè le colonne)
+        self.sequence_length = 1 # quanti x gli passo, credo 1024 (cioè le colonne)
         # self.sequence_length = 1024 # quanti x gli passo, credo 1024 (cioè le colonne)
         self.batch_size = 32 # da prendere nello yaml
         self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.num_layers, batch_first=True)
