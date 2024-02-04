@@ -2,20 +2,6 @@ import torch
 from torch import nn
 from utils.logger import logger
 
-# Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-class Classifier(nn.Module):
-    def __init__(self, num_classes):
-        super().__init__()
-        """
-        [TODO]: the classifier should be implemented by the students and different variations of it can be tested
-        in order to understand which is the most performing one """
-
-    def forward(self, x):
-        return self.classifier(x), {}
-    
-
 class LSTM(nn.Module):
     def __init__(self, num_classes=8): #* aggiusta i parametri, ad es. passa la batch come arg
         super(LSTM, self).__init__()
@@ -49,7 +35,7 @@ class LSTM(nn.Module):
         feat = out.view(-1, self.hidden_size)
         # Pass through fully connected layer to get logits
         logits = self.fc(feat)
-        logger.info(f"######## => x: {x} | x.shape: {x.shape} | l.shape: {logits.shape} | f.shape: {feat.shape} | logits: {logits} | feat: {feat}")
+        logger.info(f"######## => x.size(0): {x.size(0)}, x: {x} | x.shape: {x.shape} | l.shape: {logits.shape} | f.shape: {feat.shape} | logits: {logits} | feat: {feat}")
         
         return logits, {"features": feat} 
     
@@ -62,3 +48,5 @@ class LSTM(nn.Module):
     # #feat = hn[-1] #(32, 32)
     # #logits = self.fc(out) #(32, 8)
     # logger.info(f"hn: {hn}, hn[-1]=feat: {feat}, shape: {feat.shape}, logits: {logits}, shape: {logits.shape}")  #logits: tipo le label, cioè le previsioni tipo
+
+
