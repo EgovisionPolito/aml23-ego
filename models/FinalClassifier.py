@@ -6,7 +6,8 @@ class LSTM(nn.Module):
     def __init__(self, num_classes=8): #* aggiusta i parametri, ad es. passa la batch come arg
         super(LSTM, self).__init__()
         self.input_size = 1024
-        self.hidden_size = 32
+        self.hidden_size = 19
+        # self.hidden_size = 32
         self.num_layers = 1
         #self.sequence_length = 1 # quanti x gli passo, credo 1024 (cioè le colonne)
         self.batch_size = 32 # da prendere nello yaml
