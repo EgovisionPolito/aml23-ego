@@ -1,5 +1,5 @@
-action: ??? # train or test
-name: ??? # name of the experiment needed for the logs
+action: train # train or test
+name: Test#1 # name of the experiment needed for the logs
 modality: ["RGB"] # modality used
 total_batch: 128 # total batch size if training is done with gradient accumulation
 batch_size: 32 # batch size for the forward
@@ -7,7 +7,7 @@ gpus: null # gpus adopted
 wandb_name: null # needed for wandb logging
 resume_from: null # checkpoint directory
 logname: null # name of the logs
-models_dir: null # directory containing all the models
+models_dir: "/content/aml23-ego/models" # directory containing all the models
 
 train:
   num_iter: 5000 # number of training iterations with total_batch size
@@ -35,14 +35,14 @@ dataset:
   RGB:
     data_path: ??? # path to RGB data
     tmpl: "img_{:010d}.jpg" # format of RGB filenames
-    features_name: test_feat_kinetics
+    features_name: D1
   Event: # not neeeded for the project
     rgb4e: 6
 
 # these are the action recognition models for each modality
 models:
   RGB:
-    model: Classifier
+    model: TransformerClassifier # model name
     normalize: False
     kwargs: {}
     lr_steps: 3000

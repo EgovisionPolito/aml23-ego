@@ -68,26 +68,58 @@ class EpicKitchensDataset(data.Dataset, ABC):
             self.model_features = pd.merge(self.model_features, self.list_file, how="inner", on="uid")
 
     def _get_train_indices(self, record, modality='RGB'):
-        ##################################################################
-        # TODO: implement sampling for training mode                     #
-        # Give the record and the modality, this function should return  #
-        # a list of integers representing the frames to be selected from #
-        # the video clip.                                                #
-        # Remember that the returned array should have size              #
-        #           num_clip x num_frames_per_clip                       #
-        ##################################################################
-        raise NotImplementedError("You should implement _get_train_indices")
+        DENSE = True
 
-    def _get_val_indices(self, record, modality):
-        ##################################################################
-        # TODO: implement sampling for testing mode                      #
-        # Give the record and the modality, this function should return  #
-        # a list of integers representing the frames to be selected from #
-        # the video clip.                                                #
-        # Remember that the returned array should have size              #
-        #           num_clip x num_frames_per_clip                       #
-        ##################################################################
+        record_num_frames = record.num_frames[modality]
+        num_frames_per_clip = self.num_frames_per_clip[modality]
+        desired_num_frames = num_frames_per_clip * self.num_clips
+        sampled_frames_inidices_list = []
+
+        if DENSE:
+            ##* DENSE Sampling
+            clip_radius = (num_frames_per_clip // 2)
+            for clip_number in range(self.num_clips):
+                    clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2) # se record_num_frames=80 e cp=64 => sampled_frames_inidices_list=[48,..,64,..78], per questo il +2
+                    clip_frames_inidices_list = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius+1))
+                    #*Se volessimo una lista di array numpy dove ogni array ha i frame di una clip
+                    #clip_frames_indices_list = np.arange(clip_central_point-clip_radius, clip_central_point+clip_radius, frames_interval)
+                    #sampled_frames_inidices_list.append(clip_frames_indices_list)
+                    #*Caso di una lista piatta con solo indici
+                    sampled_frames_inidices_list.extend(clip_frames_inidices_list[:num_frames_per_clip])
+        else:
+            ##* UNIFORM Sampling
+            def uniform_sampling(clip_window):
+                clip_radius = (clip_window // 2)
+                frames_interval = clip_window//num_frames_per_clip
+
+                for clip_number in range(self.num_clips):
+                        clip_central_point = np.random.randint(clip_radius, record_num_frames-clip_radius+2)
+                        clip_frames_inidices_list = list(range(clip_central_point-clip_radius, clip_central_point+clip_radius+1, frames_interval))
+                        sampled_frames_inidices_list.extend(clip_frames_inidices_list[:num_frames_per_clip])
         
+            if record_num_frames >= 75:
+                uniform_sampling(75)    
+            elif record_num_frames>=50:
+                uniform_sampling(50)
+            elif record_num_frames>=25:
+                uniform_sampling(25)
+            else:
+                raise SystemError(f"The record {record.untrimmed_video_name} {record.uid}, has less than 25 frames!")
+
+        if(len(sampled_frames_inidices_list) < desired_num_frames):
+            #DEBUG  
+            # logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+            raise SystemError(f"For the record {record.untrimmed_video_name} {record.uid}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is less than the desired {desired_num_frames} frames!")
+        elif(len(sampled_frames_inidices_list) > desired_num_frames):
+            #DEBUG  
+            # logger.info(f"{record.untrimmed_video_name} {record.uid}- record_num_frames: {record_num_frames}, clips_interval: {clips_interval}, frames_interval: {frames_interval}, frames: {sampled_frames_inidices_list}")
+            raise SystemError(f"For the record {record.untrimmed_video_name} {record.uid}, the number of extracted frames is {len(sampled_frames_inidices_list)}, that is more than the desired {desired_num_frames} frames!")
+        else:
+            #DEBUG
+            #logger.info(f"{record.untrimmed_video_name} {record.uid} - record_num_frames: {record_num_frames}, sampled_frames_inidices_list: {sampled_frames_inidices_list}")
+            return sampled_frames_inidices_list
+  
+    def _get_val_indices(self, record, modality):        
         DENSE = True
 
         record_num_frames = record.num_frames[modality]
