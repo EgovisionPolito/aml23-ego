@@ -12,7 +12,8 @@ pkl_folder = [
 ]
 
 if __name__ == "__main__":
-    aggregate_features()
+    aggregate_features("train")
+    """
     extract_pkl(pkl_folder)
 
     data = np.array((get_data_from_pkl("saved_features/test_D5"))['features'])
@@ -20,3 +21,4 @@ if __name__ == "__main__":
 
     print(f"\nData shape: {data.shape}")
     print(f"Data aggregated shape: {data_aggregated.shape}")
+    """

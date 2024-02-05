@@ -66,9 +66,13 @@ def aggregate_features(mode):
             outputs = model(features)
 
             # ? cpu() -> move data from GPU to CPU, necessary for numpy conversion
+            #temp_features.append(
+            #  {"uid": uid, "video_name": video_name, "features_RGB": (outputs.detach().cpu().numpy())}
+            #) #LSTM (emilio's branch)
+            
             temp_features.append(
-                {"uid": uid, "video_name": video_name, "features_RGB": (outputs.detach().cpu().numpy())}
-            )
+              {"uid": uid, "features_RGB": (outputs.detach().cpu().numpy())}
+            ) #master branch
 
         aggregated_features = {"features": temp_features}
 

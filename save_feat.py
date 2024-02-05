@@ -140,9 +140,8 @@ def save_feat(model, loader, device, it, num_classes):
         pickle.dump(results_dict, open(os.path.join("saved_features", args.name + "_" +
                                                     args.dataset.shift.split("-")[1] + "_" +
                                                     args.split + ".pkl"), 'wb'))
-        
-        os.makedirs("aggregated_features", exist_ok=True)
-        if args.split == "train":
+
+        if (args.split == "train"):
             aggregate_features(args.split) # Temporary aggregation of features
 
         class_accuracies = [(x / y) * 100 for x, y in zip(model.accuracy.correct, model.accuracy.total)]

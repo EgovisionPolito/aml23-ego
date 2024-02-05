@@ -56,7 +56,13 @@ def main():
         logger.info('{} Net\tModality: {}'.format(args.models[m].model, m)) #* args.models[m].model è uguale a Classifier
         # notice that here, the first parameter passed is the input dimension
         # In our case it represents the feature dimensionality which is equivalent to 1024 for I3D
-        models[m] = getattr(model_list, args.models[m].model)(num_classes, args.batch_size) #* istanzio il Classfier in FinalClassifier.py
+        match args.models[m].model:
+            case "TransformerClassifier":
+                models[m] = getattr(model_list, args.models[m].model)(num_classes)
+            case "LSTM":
+                models[m] = getattr(model_list, args.models[m].model)(num_classes, args.batch_size) #ToDO: must be edited
+            case "MLP":
+                models[m] = getattr(model_list, args.models[m].model)() #ToDO: must be edited
 
     # the models are wrapped into the ActionRecognition task which manages all the training steps
     action_classifier = tasks.ActionRecognition("action-classifier", models, args.batch_size,      #* Passa alcuni parametri del default.yaml
@@ -133,7 +139,8 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
         # the following code is necessary as we do not reason in epochs so as soon as the dataloader is finished we need
         # to redefine the iterator
         try:
-            source_data, source_label = next(data_loader_source) #* ? divide i dati dalle labels
+            # source_data = {'RGB': torch.Tensor(32, 1024)}, source_label = torch.Tensor(32)
+            source_data, source_label = next(data_loader_source)
         except StopIteration:
             data_loader_source = iter(train_loader)
             source_data, source_label = next(data_loader_source)
@@ -211,7 +218,7 @@ def validate(model, val_loader, device, it, num_classes):
                 logits[m] = torch.zeros((args.test.num_clips, batch, num_classes)).to(device)
 
             clip = {}
-            for i_c in range(args.test.num_clips):
+            for i_c in range(args.test.num_clips): 
                 for m in modalities:
                     clip[m] = data[m][:, i_c].to(device)
 

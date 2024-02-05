@@ -1,6 +1,6 @@
 action: save # train or test
 name: saved_feat_I3D
-split: test
+split: train
 resume_from: /content/saved_models/I3D_SourceOnlyD1
 
 save:

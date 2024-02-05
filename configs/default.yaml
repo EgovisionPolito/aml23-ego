@@ -42,7 +42,7 @@ dataset:
 # these are the action recognition models for each modality
 models:
   RGB:
-    model: LSTM # model name
+    model: TransformerClassifier # model name
     normalize: False
     kwargs: {}
     lr_steps: 3000
