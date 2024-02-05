@@ -140,6 +140,7 @@ def save_feat(model, loader, device, it, num_classes):
         pickle.dump(results_dict, open(os.path.join("saved_features", args.name + "_" +
                                                     args.dataset.shift.split("-")[1] + "_" +
                                                     args.split + ".pkl"), 'wb'))
+
         if (args.split == "train"):
             aggregate_features(args.split) # Temporary aggregation of features
 

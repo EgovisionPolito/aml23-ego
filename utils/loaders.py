@@ -68,14 +68,12 @@ class EpicKitchensDataset(data.Dataset, ABC):
             self.model_features = pd.merge(self.model_features, self.list_file, how="inner", on="uid")
 
     def _get_train_indices(self, record, modality='RGB'):
-        DENSE = True
-
         record_num_frames = record.num_frames[modality]
         num_frames_per_clip = self.num_frames_per_clip[modality]
         desired_num_frames = num_frames_per_clip * self.num_clips
         sampled_frames_inidices_list = []
-
-        if DENSE:
+    
+        if self.dense_sampling[modality]:
             ##* DENSE Sampling
             clip_radius = (num_frames_per_clip // 2)
             for clip_number in range(self.num_clips):
@@ -120,14 +118,12 @@ class EpicKitchensDataset(data.Dataset, ABC):
             return sampled_frames_inidices_list
   
     def _get_val_indices(self, record, modality):        
-        DENSE = True
-
         record_num_frames = record.num_frames[modality]
         num_frames_per_clip = self.num_frames_per_clip[modality]
         desired_num_frames = num_frames_per_clip * self.num_clips
         sampled_frames_inidices_list = []
 
-        if DENSE:
+        if self.dense_sampling[modality]:
             ##* DENSE Sampling
             clip_radius = (num_frames_per_clip // 2)
             for clip_number in range(self.num_clips):

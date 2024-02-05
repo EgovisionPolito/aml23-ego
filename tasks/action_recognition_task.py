@@ -65,7 +65,7 @@ class ActionRecognition(tasks.Task, ABC):
         ----------
         data : Dict[str, torch.Tensor]
             a dictionary that stores the input data for each modality 
-
+            #* data dovrebbe contenere le features dopo la pooling?
         Returns
         -------
         Tuple[Dict[str, torch.Tensor], Dict[str, torch.Tensor]]
@@ -74,7 +74,7 @@ class ActionRecognition(tasks.Task, ABC):
         logits = {}
         features = {}
         for i_m, m in enumerate(self.modalities):
-            logits[m], feat = self.task_models[m](x=data[m], **kwargs)
+            logits[m], feat = self.task_models[m](x=data[m], **kwargs) #* chiama il forward
             if i_m == 0:
                 for k in feat.keys():
                     features[k] = {}

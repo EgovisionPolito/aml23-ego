@@ -53,19 +53,19 @@ def main():
     models = {}
     logger.info("Instantiating models per modality")
     for m in modalities:
-        logger.info('{} Net\tModality: {}'.format(args.models[m].model, m))
+        logger.info('{} Net\tModality: {}'.format(args.models[m].model, m)) #* args.models[m].model è uguale a Classifier
         # notice that here, the first parameter passed is the input dimension
         # In our case it represents the feature dimensionality which is equivalent to 1024 for I3D
         match args.models[m].model:
             case "TransformerClassifier":
                 models[m] = getattr(model_list, args.models[m].model)(num_classes)
             case "LSTM":
-                models[m] = getattr(model_list, args.models[m].model)() #ToDO: must be edited
+                models[m] = getattr(model_list, args.models[m].model)(num_classes, args.batch_size) #ToDO: must be edited
             case "MLP":
                 models[m] = getattr(model_list, args.models[m].model)() #ToDO: must be edited
-    
+
     # the models are wrapped into the ActionRecognition task which manages all the training steps
-    action_classifier = tasks.ActionRecognition("action-classifier", models, args.batch_size,
+    action_classifier = tasks.ActionRecognition("action-classifier", models, args.batch_size,      #* Passa alcuni parametri del default.yaml
                                                 args.total_batch, args.models_dir, num_classes,
                                                 args.train.num_clips, args.models, args=args)
     action_classifier.load_on_gpu(device)
@@ -79,13 +79,13 @@ def main():
         # notice, here it is multiplied by tot_batch/batch_size since gradient accumulation technique is adopted
         training_iterations = args.train.num_iter * (args.total_batch // args.batch_size)
         # all dataloaders are generated here
-        train_loader = torch.utils.data.DataLoader(EpicKitchensDataset(args.dataset.shift.split("-")[0], modalities,
+        train_loader = torch.utils.data.DataLoader(EpicKitchensDataset(args.dataset.shift.split("-")[0], modalities, #* prende aggregated_feat_train.pkl
                                                                        'train', args.dataset, None, None, None,
                                                                        None, load_feat=True),
                                                    batch_size=args.batch_size, shuffle=True,
                                                    num_workers=args.dataset.workers, pin_memory=True, drop_last=True)
 
-        val_loader = torch.utils.data.DataLoader(EpicKitchensDataset(args.dataset.shift.split("-")[-1], modalities,
+        val_loader = torch.utils.data.DataLoader(EpicKitchensDataset(args.dataset.shift.split("-")[-1], modalities,  #* prende aggregated_feat_test.pkl
                                                                      'val', args.dataset, None, None, None,
                                                                      None, load_feat=True),
                                                  batch_size=args.batch_size, shuffle=False,
@@ -115,7 +115,7 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
     """
     global training_iterations, modalities
 
-    data_loader_source = iter(train_loader)
+    data_loader_source = iter(train_loader) #* analogo all'enumerate, chiama _get_item che chiama _get_train_indices
     action_classifier.train(True)
     action_classifier.zero_grad()
     iteration = action_classifier.current_iter * (args.total_batch // args.batch_size)
@@ -145,6 +145,7 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
             data_loader_source = iter(train_loader)
             source_data, source_label = next(data_loader_source)
         end_t = datetime.now()
+        #*logger.info(f"##### DEBUG ##### - SOURCE_LABEL: {source_label} | LEN: {len(source_label)}")
 
         logger.info(f"Iteration {i}/{training_iterations} batch retrieved! Elapsed time = "
                     f"{(end_t - start_t).total_seconds() // 60} m {(end_t - start_t).total_seconds() % 60} s")
@@ -156,7 +157,9 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
         for clip in range(args.train.num_clips):
             # in case of multi-clip training one clip per time is processed
             for m in modalities:
-                data[m] = source_data[m][:, clip].to(device)
+                #* source_data[m] è (32, 1024) mentre data[m] è 32, la prima colonna xké clip=1 nello yaml
+                data[m] = source_data[m][:, clip].to(device) 
+                #*logger.info(f"##### DEBUG ##### - SOURCE_DATA: {source_data['RGB']} | SHAPE: {source_data['RGB'].shape} | DATA: {data['RGB']} | SHAPE: {data['RGB'].shape}")
 
             logits, _ = action_classifier.forward(data)
             action_classifier.compute_loss(logits, source_label, loss_weight=1)

@@ -60,15 +60,19 @@ def aggregate_features(mode):
         )
 
         temp_features = []
-        for uid, _, features in pkl_dataset:
+        for uid, video_name, features in pkl_dataset:
 
             # Forward pass
             outputs = model(features)
 
             # ? cpu() -> move data from GPU to CPU, necessary for numpy conversion
+            #temp_features.append(
+            #  {"uid": uid, "video_name": video_name, "features_RGB": (outputs.detach().cpu().numpy())}
+            #) #LSTM (emilio's branch)
+            
             temp_features.append(
-                {"uid": uid, "features_RGB": (outputs.detach().cpu().numpy())}
-            )
+              {"uid": uid, "features_RGB": (outputs.detach().cpu().numpy())}
+            ) #master branch
 
         aggregated_features = {"features": temp_features}
 
