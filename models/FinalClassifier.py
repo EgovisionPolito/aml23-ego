@@ -11,14 +11,14 @@ class LSTM(nn.Module):
         self.num_layers = 1
         #self.sequence_length = 1 # quanti x gli passo, credo 1024 (cioè le colonne)
         self.batch_size = 32 # da prendere nello yaml
-        self.lstm = nn.LSTM(self, self.input_size, self.hidden_size, self.num_layers, bias=True, batch_first=True, dropout=0.0, bidirectional=False, proj_size=0, device=None, dtype=None)
+        self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.num_layers, bias=True, batch_first=True, dropout=0.0, bidirectional=False, proj_size=0, device=None, dtype=None)
         self.fc = nn.Linear(self.hidden_size, num_classes)
 
     def forward(self, x):
         # Initialize hidden and cell states with the proper batch size
         # h0 and c0 shape = (num_layers, batch_size, hidden_size)=(1, 32, 32)
-        h0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(x.device)
-        c0 = torch.zeros(self.num_layers, self.batch_size, self.hidden_size).to(x.device)
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
+        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
 
         # aggiungo una dimensione 
         # we want x shape equal to (batch_size, sequence_length, input_size)=(32, 1, 1024)
