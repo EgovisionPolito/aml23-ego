@@ -36,7 +36,7 @@ class LSTM(nn.Module):
         feat = out.view(-1, self.hidden_size)
         # Pass through fully connected layer to get logits
         logits = self.fc(feat)
-        logger.info(f"######## => x.size(0): {x.size(0)} | bs: {self.batch_size} | x: {x} | x.shape: {x.shape} | l.shape: {logits.shape} | f.shape: {feat.shape} | logits: {logits} | feat: {feat}")
+        #logger.info(f"######## => x.size(0): {x.size(0)} | bs: {self.batch_size} | x: {x} | x.shape: {x.shape} | l.shape: {logits.shape} | f.shape: {feat.shape} | logits: {logits} | feat: {feat}")
         
         return logits, {"features": feat} 
     
