@@ -56,8 +56,14 @@ def main():
         logger.info('{} Net\tModality: {}'.format(args.models[m].model, m))
         # notice that here, the first parameter passed is the input dimension
         # In our case it represents the feature dimensionality which is equivalent to 1024 for I3D
-        models[m] = getattr(model_list, args.models[m].model)(num_classes)
-
+        match args.models[m].model:
+            case "TransformerClassifier":
+                models[m] = getattr(model_list, args.models[m].model)(num_classes)
+            case "LSTM":
+                models[m] = getattr(model_list, args.models[m].model)() #ToDO: must be edited
+            case "MLP":
+                models[m] = getattr(model_list, args.models[m].model)() #ToDO: must be edited
+    
     # the models are wrapped into the ActionRecognition task which manages all the training steps
     action_classifier = tasks.ActionRecognition("action-classifier", models, args.batch_size,
                                                 args.total_batch, args.models_dir, num_classes,
