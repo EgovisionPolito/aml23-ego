@@ -1,6 +1,5 @@
 import torch
 from torch import nn
-#from utils.logger import logger
 
 class LSTM(nn.Module):
     def __init__(self, num_classes, batch_size): #* aggiusta i parametri, ad es. passa la batch come arg
