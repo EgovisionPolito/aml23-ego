@@ -3,14 +3,15 @@ from torch import nn
 #from utils.logger import logger
 
 class LSTM(nn.Module):
-    def __init__(self, num_classes=8): #* aggiusta i parametri, ad es. passa la batch come arg
+    def __init__(self, num_classes, batch_size): #* aggiusta i parametri, ad es. passa la batch come arg
         super(LSTM, self).__init__()
         self.input_size = 1024
         self.hidden_size = 512
         self.num_layers = 2
-        #self.sequence_length = 1 # quanti x gli passo, credo 1024 (cioè le colonne)
-        self.batch_size = 32 # da prendere nello yaml
-        self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.num_layers, bias=True, batch_first=True, dropout=0.5, bidirectional=False, proj_size=0, device=None, dtype=None)
+        self.batch_size = batch_size
+        self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.num_layers, 
+                            bias=True, batch_first=True, dropout=0.5, bidirectional=False, 
+                            proj_size=0, device=None, dtype=None)
         self.fc = nn.Linear(self.hidden_size, num_classes)
 
     def forward(self, x):
