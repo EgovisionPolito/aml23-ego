@@ -3,6 +3,20 @@ from torch import nn
 from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from utils.logger import logger
 
+
+class MLP(nn.Module):
+    def __init__(self, num_input, num_classes): # 1024, 8
+        super(MLP, self).__init__()
+        self.mlp = nn.Sequential(
+            nn.Linear(num_input, 512), 
+            nn.Linear(512, num_classes)
+        )
+
+    def forward(self, x):
+        x = x.unsqueeze(1)
+        logits = self.mlp(x)
+        return logits, {"features": {}}
+
 class LSTM(nn.Module):
     def __init__(self, num_classes, batch_size): #* aggiusta i parametri, ad es. passa la batch come arg
         super(LSTM, self).__init__()
