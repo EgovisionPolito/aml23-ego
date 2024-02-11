@@ -5,15 +5,15 @@ from utils.logger import logger
 
 
 class MLP(nn.Module):
-    def __init__(self, num_input, num_classes): # 1024, 8
+    def __init__(self, num_classes, batch_size): # 1024, 8
         super(MLP, self).__init__()
+        self.input_size = 1024
         self.mlp = nn.Sequential(
-            nn.Linear(num_input, 512), 
+            nn.Linear(self.input_size, 512), 
             nn.Linear(512, num_classes)
         )
 
     def forward(self, x):
-        x = x.unsqueeze(1)
         logits = self.mlp(x)
         return logits, {"features": {}}
 
